@@ -453,6 +453,9 @@ TADA_A_read_info_AS <- function(mut_file = "../data/Yuen_NM2015_cases_DNM_CADD_g
   
   for(i in 1:length(coverage_1)){
     #write to a bed file, didn't remove mutations that have other annotations for now. 
+    ## the subsequent two lines of code are used to prevent a outputing bug when using fwrite. (85000000 to be written as 8.5e7)
+    coverage_1[[i]][,c("start")] <- as.integer(coverage_1[[i]][,c("start")])
+    coverage_1[[i]][,c("end")] <- as.integer(coverage_1[[i]][,c("end")])
     fwrite(coverage_1[[i]][,c("chr","start","end","scaling_factor","genename")], paste(prefix, "temp_for_AS_rate.bed",sep = "_"), col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
     AS_mutrate_file <- paste(AS_mutrate_file_prefix,coverage_1[[i]][1,c("chr")], sep = ".")
     command <- paste("bedtools intersect -a ", AS_mutrate_file, " -b ", paste(prefix, "temp_for_AS_rate.bed",sep = "_"), " -wa -wb > ", paste(prefix, "temp_scaling_factor_AS_rate.bed",sep = "_"), sep = "")
@@ -471,7 +474,8 @@ TADA_A_read_info_AS <- function(mut_file = "../data/Yuen_NM2015_cases_DNM_CADD_g
     mutrate_scaling_AS_rate$adjusted_mutrate <- mutrate_scaling_AS_rate$mutrate * mutrate_scaling_AS_rate$scaling_factor*2*sample_size # remember to add sample size in. 
     mutrate_scaling_AS_rate <- mutrate_scaling_AS_rate[,sum(.SD$adjusted_mutrate),by = c("chr","start","end","genename"), .SDcols = c("adjusted_mutrate")]
     colnames(mutrate_scaling_AS_rate)[5] <- "adjusted_base_mutrate" # this is the splicing mutation rate summing up allele-specific mutation rates at each base
-    
+    mutrate_scaling_AS_rate$start <- as.integer(mutrate_scaling_AS_rate$start)
+    mutrate_scaling_AS_rate$end <- as.integer(mutrate_scaling_AS_rate$end)
     # get (allele-specific)AS mutation coverage at the base level
     fwrite(mutrate_scaling_AS_rate, paste(prefix,"_temp_AS_for_getting_mutation_coverage.bed", sep = ""), col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\t")
     command <- paste("bedtools coverage -a ", mut_file, " -b ", paste(prefix,"_temp_AS_for_getting_mutation_coverage.bed", sep = ""), " > ", paste(prefix,"_temp_AS_mut_coverage.bed", sep = ""), sep = "")
