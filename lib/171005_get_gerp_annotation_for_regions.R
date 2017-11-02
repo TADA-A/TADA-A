@@ -1,16 +1,19 @@
 # This script will take as input some genomic regions and will get all the bed intervals that have gerp score greater than some threshold.
 # Usage:
-# Rscript script.R [input_regions] [gerp_cutoff] [output_file]
+# Rscript script.R [input_regions] [gerp_cutoff] [output_file] [bigwig_tool]
 
 # prefix for temporary files that will be deleted at the end of the pipeline
 prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
 
-args <- c("/media/yuwen/F/TADA-A/data/enhancers/Example_enhancers.bed.tempaa", "/media/yuwen/F/TADA-A/other_annotations/conservation_raw_file/hg19_gerp_score.bw",
-          2, "/media/yuwen/F/TADA-A/data/enhancers/Example_enhancers.bed.tempaa.gt2.gerp.bed")
+#args <- c("/media/yuwen/F/TADA-A/data/enhancers/Example_enhancers.bed.tempaa", "/media/yuwen/F/TADA-A/other_annotations/conservation_raw_file/hg19_gerp_score.bw",
+#          2, "/media/yuwen/F/TADA-A/data/enhancers/Example_enhancers.bed.tempaa.gt2.gerp.bed")
 options(scipen=999)
 library(data.table)
 library(parallel)
 args <- commandArgs(trailingOnly = TRUE)
+if(length(args) == 4){
+  args = append(args, "../../external_tools/bigWigAverageOverBed")
+}
 print(args)
 input_regions <- fread(args[1], header = FALSE, sep = "\t", stringsAsFactors = FALSE) 
 input_regions$data_bins <- 1
@@ -40,7 +43,7 @@ input_regions[[3]] <- as.character(input_regions[[3]])
 input_regions[[4]] <- as.character(input_regions[[4]])
 
 fwrite(input_regions, paste(args[1], prefix, "temp", sep = "_"), col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
-command <- paste("../../external_tools/bigWigAverageOverBed ", args[2], " ",paste(args[1], prefix, "temp", sep = "_"),
+command <- paste(args[5]," ", args[2], " ",paste(args[1], prefix, "temp", sep = "_"),
 " ", paste(args[1], prefix, "temp.gerp", sep = "_"), sep = "") 
 system(command)
 command <- paste("awk '$4 > ", args[3], "' ", paste(args[1], prefix, "temp.gerp", sep = "_"), "| awk '{print $1}' > ", paste(args[1], prefix, "temp.gerp2", sep = "_"), sep = "")
