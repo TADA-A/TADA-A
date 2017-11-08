@@ -152,7 +152,7 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
   #funtion to expand windows to bases
   window_expansion <- function(table_row){
     start <- seq(as.numeric(table_row[2]),as.numeric(table_row[3])-1)
-    data.frame(table_row[1], start, start+1, paste(table_row["genename"],start,sep = "_"), table_row["ID"])
+    data.frame(table_row[1], start, start+1, paste(table_row["chr"],table_row["genename"],start,sep = "_"), table_row["ID"])
   }
   
   options(warn=-1)
