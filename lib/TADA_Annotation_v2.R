@@ -84,7 +84,8 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
                              mutrate_ref_files = c("../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
                                                    "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
                                                    "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
-                                                   "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")){
+                                                   "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw"),
+                             MPI = 1){
 
 # [mut_file] is a vector of files with DNM infomation in a txt format. The first three columns are chromosome, 0-based start and 1-based end, followed by two columns of ref and alt alleles.
 # The code currently only works for SNVs. 
@@ -101,10 +102,10 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
 # [report_proportion] Choose the top X% TADA genes to estimate RR. 
 # [node_n] is the number of nodes used to run a certain chunk of the code, default is 6
 # [mutrate_ref_files] is a vector of mutrate files in the bigwiggle format. These files have base-level mutation rates to a specific allele, A, C, G, T. 
-
+# [MPI] is the index that will add to temp files, useful when running multipe processes at one time
   # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
-  prefix <- paste("tmp/", prefix, sep = "")
+  prefix <- paste("tmp/", prefix, MPI, sep = "")
   
   # make a tmp folder for tmp files
   system("mkdir -p tmp")
