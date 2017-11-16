@@ -119,7 +119,9 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
     system(paste("echo \"Finished reading mutrate scaling file ", mutrate_scaling_files[i], ".\"", sep = ""))
     system("date")
     coverage <- coverage[mutrate_scaling, on = "site_index"]
+    coverage <- coverage[complete.cases(coverage)] # release memory
     colnames(coverage)[length(colnames(coverage))] <- paste("scaling_factor_study_", i, sep = "")
+    rm(mutrate_scaling) # release memory
   }
   
   # get the piror probability of genes.
@@ -304,6 +306,7 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
         coverage_noncoding_for_base_mutrate_temp <- sapply(coverage_noncoding_for_base_mutrate_temp, partition_feature, simplify = FALSE)
         # add compact data
         data_partition <- append(data_partition, coverage_noncoding_for_base_mutrate_temp)
+        rm(coverage_noncoding_for_base_mutrate_temp) # release memory
         system(paste("echo \"Finished read in mutation data and make them into the compact format for Study ", m, " and allele ", letter, ".\"", sep = ""))
         system("date")
       }
