@@ -323,17 +323,37 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
 }
 
 
-TADA_A_RR_estimate <-function(data, selected_annotations, gene_prior_file, optimization_iteration = 2000){
+TADA_A_RR_estimate <-function(data, selected_annotations, gene_prior_file, optimization_iteration = 2000, mode = "regular"){
   #[data] is the [base_info] returned from [TADA_A_reading_in_annotations], which contains all the allele specific data across all studies
   #[selected_annotations] is a vector indicating non-coding annotations whose RRs need to be estimated. e.g., c(2,3) means that the 2nd and 3rd annotations in the [noncoding_annotations] argument of [TADA_A_reading_in_annotations] will have their RRs estimated.
   #[gene_prior_file], #[gene_prior_file], a file that has the prior probability of each gene as a risk gene. e.g., "../data/Example_gene_prior.txt".
   #[optimization_iteration] is the number of iterations that optim() will perform to estimate RRs.
+  #[mode] is "regular", or "single_fast". "single_fast" is used when estimating RR from only one annotation ([data] only recoreded one annotation) of lots of genes (e.g., all genes), would be 5 times faster.
   
   # get the piror probability of genes.
   gene_prior = fread(gene_prior_file, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
   colnames(gene_prior) = c("genename", "prior")
   gene_prior$prior <- as.numeric(gene_prior$prior)
   gene_prior$genename = as.character(gene_prior$genename)
+  if(mode == "single_fast"){
+    further_collapsed_data <- list()
+    genes_with_annotation <- unique(names(data))
+    
+    for(i in 1:length(genes_with_annotation)){
+      further_collapsed_data <- append(further_collapsed_data, list(list(`1` = list(feature_vector = 1 , sum_mut_rate_count= 0, sum_mut_rate = 0, sum_mut_count = 0, log_fcount = 0))))
+    }
+    names(further_collapsed_data) <- unique(names(data))
+    
+    for(i in 1:length(data)){
+      Part_of_data = data[i]
+      further_collapsed_data[[names(Part_of_data)]][[1]]$sum_mut_rate_count <- further_collapsed_data[[names(Part_of_data)]][[1]]$sum_mut_rate_count + Part_of_data[[1]][[1]]$sum_mut_rate_count
+      further_collapsed_data[[names(Part_of_data)]][[1]]$sum_mut_rate <- further_collapsed_data[[names(Part_of_data)]][[1]]$sum_mut_rate + Part_of_data[[1]][[1]]$sum_mut_rate
+      further_collapsed_data[[names(Part_of_data)]][[1]]$sum_mut_count <- further_collapsed_data[[names(Part_of_data)]][[1]]$sum_mut_count + Part_of_data[[1]][[1]]$sum_mut_count
+      further_collapsed_data[[names(Part_of_data)]][[1]]$log_fcount <- further_collapsed_data[[names(Part_of_data)]][[1]]$log_fcount + Part_of_data[[1]][[1]]$log_fcount
+    }
+    data <- further_collapsed_data
+  }
+  
   # notice the fr function is different from the function that deals with dataset without partition, needs to consider splicing mutation together
   fr <-function(x){ # x is the RRs of selected noncoding annotations. 
     all_rr = x # all_rr is the all regulatory features not including splicing
@@ -353,7 +373,7 @@ TADA_A_RR_estimate <-function(data, selected_annotations, gene_prior_file, optim
     
     logP_Zg1 = sapply(data, cal_logP_Zg1)
     logP_Zg0 = sapply(data, cal_logP_Zg0)
-      
+    
     logP_table<-data.table(logP_Zg1 = logP_Zg1, logP_Zg0 = logP_Zg0, genename = names(logP_Zg1))
     logP_table <- logP_table[gene_prior, on = "genename"]
     logP_table <- logP_table[complete.cases(logP_table)]
@@ -730,6 +750,23 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   for(m in 1:length(mutrate_scaling_files)){
     fwrite(mut_output_list[[m]], output_allele_info_files[m], col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
     fwrite(mut_output_list[[m]][,1:3], output_bed_files[m], col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
+  }
+}
+
+
+retrieve_mutation_info <- function(data_partition, genename, noncoding_annotation){
+  #[data_partition] is the [base_info] returned from [TADA_A_read_info]
+  #[genename] is the genename to search for
+  # [noncoding_annotation] is a vector containing the annotation names that stored in data_partition
+  
+  data_of_a_gene <- data_partition[names(data_partition) == "JUP"]
+  for(i in 1:length(data_of_a_gene)){
+    for(j in 1:length(data_of_a_gene[[i]])){
+      if(data_of_a_gene[[i]][[j]]$sum_mut_count > 0){
+        print(noncoding_annotation[data_of_a_gene[[i]][[j]]$feature_vector * seq(1,length(noncoding_annotation))])
+        print(data_of_a_gene[[i]][[j]]$sum_mut_count)
+      }
+    }
   }
 }
 
