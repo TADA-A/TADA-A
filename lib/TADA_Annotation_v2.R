@@ -517,7 +517,8 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
                                                        "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw"),
                                  rr = c(1, 0, 0.5),
                                  output_allele_info_files,
-                                 output_bed_files){
+                                 output_bed_files,
+                                 output_risk_genes_file = "temp.riskgenes"){
   
   # [mut_file] is a vector of files with DNM infomation in a txt format. The first three columns are chromosome, 0-based start and 1-based end, followed by two columns of ref and alt alleles.
   # The code currently only works for SNVs. 
@@ -537,6 +538,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   # [rr] is the log-relative risk of DNMs.
   # [output_allele_info_files] is a vector of files containing coordinates of mutations and ref/alt alleles
   # [output_bed_files] is a vector of files containing coordinates only of mutations.
+  # [output_risk_genes_file] is a string indicating the output file containing the names of risk genes in a column.
   # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- paste("tmp/", prefix, sep = "")
@@ -751,7 +753,9 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
     fwrite(mut_output_list[[m]], output_allele_info_files[m], col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
     fwrite(mut_output_list[[m]][,1:3], output_bed_files[m], col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
   }
+  fwrite(risk_genes, output_risk_genes_file, col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
 }
+
 
 
 retrieve_mutation_info <- function(data_partition, genename, noncoding_annotation){
@@ -759,7 +763,7 @@ retrieve_mutation_info <- function(data_partition, genename, noncoding_annotatio
   #[genename] is the genename to search for
   # [noncoding_annotation] is a vector containing the annotation names that stored in data_partition
   
-  data_of_a_gene <- data_partition[names(data_partition) == "JUP"]
+  data_of_a_gene <- data_partition[names(data_partition) == genename]
   for(i in 1:length(data_of_a_gene)){
     for(j in 1:length(data_of_a_gene[[i]])){
       if(data_of_a_gene[[i]][[j]]$sum_mut_count > 0){
