@@ -519,7 +519,8 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
                                  output_allele_info_files,
                                  output_bed_files,
                                  output_risk_genes_file = "temp.riskgenes",
-                                 compact_mut_output = NA){
+                                 compact_mut_output = NA,
+                                 MPI = 1){
   
   # [mut_file] is a vector of files with DNM infomation in a txt format. The first three columns are chromosome, 0-based start and 1-based end, followed by two columns of ref and alt alleles.
   # The code currently only works for SNVs. 
@@ -541,9 +542,10 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   # [output_bed_files] is a vector of files containing coordinates only of mutations.
   # [output_risk_genes_file] is a string indicating the output file containing the names of risk genes in a column.
   # [compact_mut_output] if set to be True, a RDS with mutation data in a compact form will be generated. Useful for estimating RR and claculating Bayes factor
+  # [MPI] is the index that will add to temp files, useful when running multipe processes at one time
   # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
-  prefix <- paste("tmp/", prefix, sep = "")
+  prefix <- paste("tmp/", prefix, MPI, sep = "")
   
   # make a tmp folder for tmp files
   system("mkdir -p tmp")
