@@ -518,7 +518,8 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
                                  rr = c(1, 0, 0.5),
                                  output_allele_info_files,
                                  output_bed_files,
-                                 output_risk_genes_file = "temp.riskgenes"){
+                                 output_risk_genes_file = "temp.riskgenes",
+                                 compact_mut_output = NA){
   
   # [mut_file] is a vector of files with DNM infomation in a txt format. The first three columns are chromosome, 0-based start and 1-based end, followed by two columns of ref and alt alleles.
   # The code currently only works for SNVs. 
@@ -539,6 +540,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   # [output_allele_info_files] is a vector of files containing coordinates of mutations and ref/alt alleles
   # [output_bed_files] is a vector of files containing coordinates only of mutations.
   # [output_risk_genes_file] is a string indicating the output file containing the names of risk genes in a column.
+  # [compact_mut_output] if set to be True, a RDS with mutation data in a compact form will be generated. Useful for estimating RR and claculating Bayes factor
   # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- paste("tmp/", prefix, sep = "")
@@ -638,6 +640,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   
   alt_letters <- c("A","C","G","T")
   mut_output_list <- list()
+  data_partition <- list()
   for(m in 1:length(mutrate_scaling_files)){
     mut_output_list[[m]] <- data.table(chr = character(), start = integer(), end = integer(), ref = character(), alt = character())
   }
@@ -722,12 +725,33 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
         # removing sites with allele-specific mutrate == 0 will result in incomplete rows after merging.
         coverage_noncoding_for_base_mutrate_temp <- coverage_noncoding_for_base_mutrate_temp[complete.cases(coverage_noncoding_for_base_mutrate_temp)]
         # derive the adjusted mutation rate for bases of risk genes and nonrisk genes.
-        # first multiplies sample size and scaling factor
+        # first multiplies sample size and scaling factor, adjusted_base_mutrate will be used for generating data in a compact format.
         coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate <- coverage_noncoding_for_base_mutrate_temp[, paste("base_mutrate_alt_", letter, sep = ""), with = FALSE] * coverage_noncoding_for_base_mutrate_temp[, paste("scaling_factor_study_", m, sep = ""), with = FALSE] * 2 * sample_sizes[m]
-        # Then multiplies effect size after taking exponential 
-        coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate <- exp(as.matrix(coverage_noncoding_for_base_mutrate_temp[,4 : (3 + feature_number)]) %*% rr * coverage_noncoding_for_base_mutrate_temp$risk) * coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate
+        # Then multiplies effect size after taking exponential, to generate a mutrate that has taken into account RRs, will be used for simulating mutations
+        # 
+        coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate_rr <- exp(as.matrix(coverage_noncoding_for_base_mutrate_temp[,4 : (3 + feature_number)]) %*% rr * coverage_noncoding_for_base_mutrate_temp$risk) * coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate
         # generate random allele-specific mutations based on adjusted mutation rate.
-        coverage_noncoding_for_base_mutrate_temp$mut_count <- rpois(nrow(coverage_noncoding_for_base_mutrate_temp), coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate)
+        coverage_noncoding_for_base_mutrate_temp$mut_count <- rpois(nrow(coverage_noncoding_for_base_mutrate_temp), coverage_noncoding_for_base_mutrate_temp$adjusted_base_mutrate_rr)
+        
+        if(!is.na(compact_mut_output)){
+          # have to collpase data at this point, otherwise, the I will run out of RAM if process 1000 genes every time. 
+          anno_count <- rep(0, nrow(coverage_noncoding_for_base_mutrate_temp))
+          for(p in 1:feature_number){
+            anno_count <- anno_count + coverage_noncoding_for_base_mutrate_temp[[(4 + p -1)]]
+          }
+          # remove rows(bases) that don't have any non-coding features, this could save a lot of RAM, so I could use smaller partition number which would greatly accelerate speed when read in data for all genes.
+          coverage_noncoding_for_base_mutrate_temp1 <- coverage_noncoding_for_base_mutrate_temp[anno_count >0,]
+        
+          # first partition by gene for the current chunk
+          coverage_noncoding_for_base_mutrate_temp1<- split(coverage_noncoding_for_base_mutrate_temp1, coverage_noncoding_for_base_mutrate_temp1$genename)
+          # then partition by feature configuration for each gene in the current chunk
+          coverage_noncoding_for_base_mutrate_temp1 <- sapply(coverage_noncoding_for_base_mutrate_temp1, partition_feature, simplify = FALSE)
+          # add compact data
+          data_partition <- append(data_partition, coverage_noncoding_for_base_mutrate_temp1)
+          rm(coverage_noncoding_for_base_mutrate_temp1) # release memory
+          system(paste("echo \"Finished read in mutation data and make them into the compact format for Study ", m, " and allele ", letter, ".\"", sep = ""))
+          system("date")
+        }
         # then generate bed file format, this is a pseudobed file as I will put N at the 4th column as the ref allele is not relevant and mutant allele at the last column.
         # remove rows(bases) that don't have any DNMs
         coverage_noncoding_for_base_mutrate_temp <- coverage_noncoding_for_base_mutrate_temp[mut_count >0,]
@@ -753,7 +777,10 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
     fwrite(mut_output_list[[m]], output_allele_info_files[m], col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
     fwrite(mut_output_list[[m]][,1:3], output_bed_files[m], col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
   }
-  fwrite(risk_genes, output_risk_genes_file, col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
+  write.table(risk_genes, output_risk_genes_file, col.names = FALSE, row.names = FALSE, sep = "\t", quote = FALSE)
+  if(!is.na(compact_mut_output)){
+    saveRDS(data_partition, compact_mut_output)
+  }
 }
 
 
