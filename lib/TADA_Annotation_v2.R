@@ -607,7 +607,9 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   }
   
   options(warn=-1)
-  cl <- makeCluster(node_n)
+  if(node_n != 1){
+    cl <- makeCluster(node_n)
+  }
   # use parallel computing and rbindlist to increase the speed by thousands of times. 
   environment(window_expansion) <- .GlobalEnv
   environment(bed_extension) <- .GlobalEnv
@@ -650,7 +652,11 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   # here only deals with the noncoding parts that are within 10kb of TSSs of genes. Will deal with 
   for(i in 1:chunk_partition_num){
     # split coverage_noncoding to 10 parts, and for each part, generate feature table (which will be used for )
-    coverage_noncoding_for_base_mutrate <- rbindlist(parApply(cl, coverage[[i]], 1, window_expansion))
+    if(node_n != 1){
+      coverage_noncoding_for_base_mutrate <- rbindlist(parApply(cl, coverage[[i]], 1, window_expansion))
+    }else{
+      coverage_noncoding_for_base_mutrate <- rbindlist(apply(coverage[[i]], 1, window_expansion))
+    }
     system(paste("echo \"Finished partitioning base-level coordinates data at Round ", i, ".\"", sep = ""))
     system("date")
     colnames(coverage_noncoding_for_base_mutrate) <- c("chr","start","end","base_ID","ID")
@@ -758,7 +764,11 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
         # then generate bed file format, this is a pseudobed file as I will put N at the 4th column as the ref allele is not relevant and mutant allele at the last column.
         # remove rows(bases) that don't have any DNMs
         coverage_noncoding_for_base_mutrate_temp <- coverage_noncoding_for_base_mutrate_temp[mut_count >0,]
-        mut_bed <- rbindlist(parApply(cl, coverage_noncoding_for_base_mutrate_temp, 1, bed_extension))
+        if(node_n != 1){
+          mut_bed <- rbindlist(parApply(cl, coverage_noncoding_for_base_mutrate_temp, 1, bed_extension))
+        }else{
+          mut_bed <- rbindlist(apply(coverage_noncoding_for_base_mutrate_temp, 1, bed_extension))
+        }
         mut_bed$ref <- "N"
         mut_bed$alt <- letter
         mut_bed$start <- as.integer(as.character(mut_bed$start))
@@ -769,7 +779,9 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
     }
   }
   
-  stopCluster(cl)
+  if(node_n != 1){
+    stopCluster(cl)
+  }
   options(warn = 0)
   # remove temporary files
   system(paste("rm ", prefix, "_temp*", sep = ""))
