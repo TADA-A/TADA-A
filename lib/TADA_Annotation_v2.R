@@ -654,6 +654,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
     system(paste("echo \"Finished partitioning base-level coordinates data at Round ", i, ".\"", sep = ""))
     system("date")
     colnames(coverage_noncoding_for_base_mutrate) <- c("chr","start","end","base_ID","ID")
+    coverage_noncoding_for_base_mutrate <- coverage_noncoding_for_base_mutrate[!duplicated(base_ID)]
     coverage_noncoding_for_base_mutrate$start <- as.integer(coverage_noncoding_for_base_mutrate$start)
     coverage_noncoding_for_base_mutrate$end <- as.integer(coverage_noncoding_for_base_mutrate$end)
     
