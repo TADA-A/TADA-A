@@ -159,7 +159,9 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
   }
   
   options(warn=-1)
-  cl <- makeCluster(node_n)
+  if(node_n != 1){
+    cl <- makeCluster(node_n)
+  }
   # use parallel computing and rbindlist to increase the speed by thousands of times. 
   environment(window_expansion) <- .GlobalEnv
   
@@ -197,7 +199,11 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
   # here only deals with the noncoding parts that are within 10kb of TSSs of genes. Will deal with 
   for(i in 1:chunk_partition_num){
     # split coverage_noncoding to 10 parts, and for each part, generate feature table (which will be used for )
-    coverage_noncoding_for_base_mutrate <- rbindlist(parApply(cl, coverage[[i]], 1, window_expansion))
+    if(node_n != 1){
+      coverage_noncoding_for_base_mutrate <- rbindlist(parApply(cl, coverage[[i]], 1, window_expansion))
+    }else{
+      coverage_noncoding_for_base_mutrate <- rbindlist(apply(coverage[[i]], 1, window_expansion))
+    }
     system(paste("echo \"Finished partitioning base-level coordinates data at Round ", i, ".\"", sep = ""))
     system("date")
     colnames(coverage_noncoding_for_base_mutrate) <- c("chr","start","end","base_ID","ID")
@@ -313,7 +319,9 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
     }
   }
   
-  stopCluster(cl)
+  if(node_n != 1){
+    stopCluster(cl)
+  }
   options(warn = 0)
   # remove temporary files
   system(paste("rm ", prefix, "_temp*", sep = ""))
