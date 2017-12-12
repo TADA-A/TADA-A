@@ -12,4 +12,40 @@ Bedtools need to be installed and added to your PATH. We suggest using v2.17.0, 
 ### 2.2 bigWigAverageOverBed
 This executable has been added in the `external_tools` folder.
 
-## 3. 
+## 3. User guide
+
+### 3.1 Step 1: Adjust mutation rates for each study.
+Make a R/Rmd file in the `analysis` folder. And follow the examples below to build your own analysis pipeline.
+
+```r
+source("../lib/TADA_Annotation.R")
+TADA_A_adjust_mutation_rate(mut_file = "../data/Yuen_NM2015_cases_DNM.bed",
+                            window_file = "../data/Example_windows_with_div_score.bed",
+                            sample_size = 162, 
+                            scale_features = c("GC_content", "div_score"),
+                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt")
+
+TADA_A_adjust_mutation_rate(mut_file = "../data/Kong_cases_DNM.bed",
+                            window_file = "../data/Example_windows_with_div_score.bed",
+                            sample_size = 78, 
+                            scale_features = c("GC_content", "div_score"), 
+                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt")
+
+TADA_A_adjust_mutation_rate(mut_file = "../data/Wu_cases_DNM.bed",
+                            window_file = "../data/Example_windows_with_div_score.bed",
+                            sample_size = 32, 
+                            scale_features = c("GC_content", "div_score"), 
+                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt")
+
+TADA_A_adjust_mutation_rate(mut_file = "../data/Jiang_cases_DNM.bed",
+                            window_file = "../data/Example_windows_with_div_score.bed",
+                            sample_size = 32, 
+                            scale_features = c("GC_content", "div_score"), 
+                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt")
+
+TADA_A_adjust_mutation_rate(mut_file = "../data/Michaelson_cases_DNM.bed",
+                            window_file = "../data/Example_windows_with_div_score.bed",
+                            sample_size = 10, 
+                            scale_features = c("GC_content", "div_score"), 
+                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt")
+```
