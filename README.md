@@ -145,4 +145,36 @@ A string representing the name of a file with the prior probability of each gene
 |CHD8	|0.999999999694329|
 |SCN2A	|0.999999999591982|
 
+--nonAS_noncoding_annotations
 
+A vector representing the names of non-allele specific annotations. All annotations should be in a 3-column BED format. Each annotation file covers all the bases (or at least all the bases included in the window file) that have that annotation.
+
+--AS_noncoding_annotations
+
+A list representing allele-specific annotations. Each element of the list is a four-element vector of the names of allele-specific annotation files for each annotation. Each allele-specific annotation file of an annotation is in 3-column BED format, covering all the bases (or at least all the bases included in the window file) that have that annotation if mutated to a certain allele. The ordering of these allele-specific annotation files for one annotation strictly follows mutant allele as "A", "C", "G", and "T".
+
+--report_proportion
+
+A number showing the proportion of genes whose DNM and annotation information will be collected and used in relative risk estimation of annotations. All the genes in the `gene_prior_file` will be ranked from high to low based on their prior probabilities. Only the top proportion based on `report_proportion` of all genes will be used. 
+
+--chunk_partition_num
+
+A number specifying how many partitions will the `window_file` be split into. We do partitions in order to reduce the computation burden by only handling a relatively small set of genomic regions when counting DNM and recording annotations at each base. If only look at top 1000 genes, setting `--chunk_partition_num` to 1 would be usually sufficient.
+
+--node_n
+
+The number of computational nodes that needs to be used.
+                                 
+--mutrate_ref_files
+
+A vector specifying the names of the base-level allele-specific baseline mutation rate files. These files are in the bigWiggle format, storing base-level mutation rates for mutant allele as "A", "C", "G", and "T", sequentially. Users could use their own mutation rate models but need to build their own base-level allele-specific mutation rate files accordingly. 
+
+#### 3.2.2 Feature selection.
+
+Estimate the relative risks of each individual annotation supplied to `TADA_A_read_info`, and only use the sinificant ones for the next round of joint estimation.
+
+```r
+for(i in 1:13){
+TADA_A_RR_estimate(data = compact_data_1$base_info, selected_annotations = c(i), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
+}
+```
