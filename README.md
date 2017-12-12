@@ -57,7 +57,7 @@ The documentations of the parameters of `TADA_A_adjust_mutation_rate` are listed
 
 --mut_file
 
-A DNM bed file with three columns, separated by "\t"
+A string representing a DNM bed file with three columns, separated by "\t". Notice, here the mutation file does not need to have allele information.
 chr \t start(0-based) \t end(1-based)
 
 --window_file
@@ -93,7 +93,7 @@ A string giving the name of the output file that gives a mutation rate scaling f
 
 #### 3.2.1 Read in DNM data and annotation
 
-We read DNM data and annotation data using `TADA_A_read_info`
+We read DNM data and annotation data using `TADA_A_read_info` and store all the information into `compact_data`, a compact data form benefiting from our categorization trick. This categorization trick greatly reduced the size of the data and facilitates fast parameter inference. 
 ```r
 compact_data <- TADA_A_read_info(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../data/Kong_cases_DNM_with_allele_info.txt","../data/Wu_cases_DNM_with_allele_info.txt", "../data/Jiang_cases_DNM_with_allele_info.txt", "../data/Michaelson_cases_DNM_with_allele_info.txt"),
                                  window_file = "../data/Example_windows_with_div_score.bed",
@@ -111,3 +111,13 @@ compact_data <- TADA_A_read_info(mut_files = c("../data/Yuen_NM2015_cases_DNM_wi
                       "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
 )
 ```
+The documentations of the parameters of `TADA_A_read_info` are listed below
+
+--mut_files
+
+A vector with names of DNM files. Notice here allelic information needs to be included as our model is allele-aware. Below is an example of the first three rows of one DNM file.
+
+|----|----|----|----|----|
+|chr3	|26636920	|26636921	|A	|G|
+|chr3	|70569020	|70569021	|A	|C|
+|chr3	|82677644	|82677645	|A	|G|
