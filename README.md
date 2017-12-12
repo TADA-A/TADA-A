@@ -171,10 +171,19 @@ A vector specifying the names of the base-level allele-specific baseline mutatio
 
 #### 3.2.2 Feature selection.
 
-Estimate the relative risks of each individual annotation supplied to `TADA_A_read_info`, and only use the sinificant ones for the next round of joint estimation.
+Estimate the relative risks of each individual annotation supplied to `TADA_A_read_info`, and only use the sinificant ones for the next round of joint estimation. The code below performs relative risk estimation. We have 13 features here, so we estimate the relative risk for each feature sequentially.
 
 ```r
 for(i in 1:13){
 TADA_A_RR_estimate(data = compact_data_1$base_info, selected_annotations = c(i), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
 }
 ```
+The documentations of the parameters of `TADA_A_RR_estimate` are listed below
+
+--data
+
+The `base_info` object returned by `TADA_A_read_info`, which stores DNM information, mutation rates, and annotations for each gene in a compact format. 
+
+--selected_annotations
+
+A vector indicating which annotations are used in relative risk estimation. In the feature selection step, we always estimate relative risk for each feature separately, so the vector only has one number specifying which annotation will be used. As you may member, we have multiple annotations specified by `--nonAS_noncoding_annotations` and `AS_noncoding_annotations`. We numbered these annotations from 1 to the total number of annotations. For example, if we have three nonallele-specific annotations `c("nonAS_Annotation_1", "nonAS_Annotation_2", "nonAS_Annotation_3")` specified by `--nonAS_noncoding_annotations`, and two allele-specific annotations `list(c("AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A"), c("AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A"))` specified by `AS_noncoding_annotations`. Then we have five annotations together, "nonAS_Annotation_1", "nonAS_Annotation_2", "nonAS_Annotation_3", "AS_Annotation_1", and "AS_Annotation_2" will be numbered 1, 2, 3, 4, 5, respectively. If we want to estimate the relative risk of "nonAS_Annotation_3", we set `--selected_annotations` to `c(3)`. If we want to jointly estimate the relative risks of "nonAS_Annotation_3" and "AS_Annotation_1", we set `--selected_annotations` to `c(3,4)`.
