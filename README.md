@@ -122,3 +122,27 @@ A vector with names of DNM files. Notice here allelic information needs to be in
 |chr3	|26636920	|26636921	|A	|G|
 |chr3	|70569020	|70569021	|A	|C|
 |chr3	|82677644	|82677645	|A	|G|
+
+--window_file
+
+Must be the same window file used in the mutation rate adjustion step (Step 3.1).
+
+--mutrate_scaling_files
+
+A vector with the names of mutation rate scaling files which were generated in the mutation rate adjustion step (Step 3.1). The ordering of these files should be consistent with that of the mutation rate files specified by `--mut_files`
+
+--sample_sizes
+
+A vector with the sample sizes of all the studies. The ordering of these numbers should be consistent with the mutation rate files specified by `--mut_files`
+
+--gene_prior_file
+
+A string representing the name of a file with the prior probability of each gene being risk gene. Below is an example of the first three rows of one prior file. 
+
+|    |    |    |    |    |
+|----|----|----|----|----|
+|genename	|prior|
+|CHD8	|0.999999999694329|
+|SCN2A	|0.999999999591982|
+
+
