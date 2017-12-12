@@ -200,7 +200,7 @@ A string representing the name of a file with the prior probability of each gene
 
 --optimization_iteration
 
-The maximum number of iterations when performing optimization. `Optim()` was used for optimization. 
+The maximum number of iterations when performing optimization. `Optim()` was used for optimization. The search space for when only one parameter is estimated is from -1 to 10.
 
 --mode 
 
