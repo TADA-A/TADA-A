@@ -117,6 +117,7 @@ The documentations of the parameters of `TADA_A_read_info` are listed below
 
 A vector with names of DNM files. Notice here allelic information needs to be included as our model is allele-aware. Below is an example of the first three rows of one DNM file.
 
+|    |    |    |    |    |
 |----|----|----|----|----|
 |chr3	|26636920	|26636921	|A	|G|
 |chr3	|70569020	|70569021	|A	|C|
