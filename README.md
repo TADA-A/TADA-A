@@ -49,3 +49,28 @@ TADA_A_adjust_mutation_rate(mut_file = "../data/Michaelson_cases_DNM.bed",
                             scale_features = c("GC_content", "div_score"), 
                             scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt")
 ```
+
+In the example code above, we used `TADA_A_adjust_mutation_rate` to adjust the baseline observed mutation rate for each study. We used DNM data from five different studies.
+
+The documentations of the parameters of `TADA_A_adjust_mutation_rate` are listed below
+
+```
+--mut_file
+
+A DNM bed file with three columns, separated by "\t"
+chr \t start(0-based) \t end(1-based)
+
+--window_file
+
+A window file that has several columns. Each row is a 50-bp window with coordinates information, its associated gene name and other features that are used to adjust baseline mutation rates.
+
+
+```
+
+|chr	|start	|end	|site_index	|genename	|mutrate	|coding	|promoter	|GC_content	|div_score|
+|----|----|----|----|----|----|----|----|----|----|
+|chr1	|68090	|68140	|1	|OR4F5	|7.29662e-07	|0	|1	|0.38	|0.0740137843475107|
+|chr1	|68140	|68190	|2	|OR4F5	|5.25763e-07	|0	|1	|0.38	|0.0740137843475107|
+|chr1	|68190	|68240	|3	|OR4F5	|7.657e-07	|0	|1	|0.42	|0.0740137843475107|
+
+
