@@ -81,9 +81,30 @@ A vector showing the names of the features for which normalization are needed wh
 
 --scaling_file_name
 
-A string giving the name of the output file that gives a mutation rate scaling factor for each window, which will be used in the following steps. The first three rows of an example output file is shown below. As you can see, we use `site_index` to as the main identifier to link the window file and the mutation rate scaling file. 
+A string giving the name of the output file that gives a mutation rate scaling factor for each window, which will be used in the following steps. The first three rows of an example output file is shown below. As you can see, we use `site_index` as the main identifier to link the window file and the mutation rate scaling file. 
 
 |site_index	|scaling_factor|
 |----|----|
 |1	|0.454254325330186|
 |2	|0.454254325330187|
+
+
+### 3.2 Step 2: Feature selection of annotations.
+
+```r
+compact_data_1 <- TADA_A_read_info(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../data/Kong_cases_DNM_with_allele_info.txt","../data/Wu_cases_DNM_with_allele_info.txt", "../data/Jiang_cases_DNM_with_allele_info.txt", "../data/Michaelson_cases_DNM_with_allele_info.txt"),
+                                 window_file = "../data/Example_windows_with_div_score.bed",
+                                 mutrate_scaling_files = c("../data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
+                                 sample_sizes = c(162, 78, 32, 32, 10),
+                                 gene_prior_file = "../data/Example_gene_prior.txt",
+                                 nonAS_noncoding_annotations = c("../data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed", "../data/Epigenome_E081_E082_intersection__within_10kb_and_promoter_no_utr.bed", "../data/Encode_DHS_union_within_10kb_and_promoter_no_utr.bed","../data/170820_gerp_gt2.all.sorted.merged.bed","../other_annotations/conservation/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed", "../other_annotations/conservation/Epigenome_E081_E082_intersection__within_10kb_and_promoter_no_utr_gerp_gt2.bed", "../other_annotations/conservation/Encode_DHS_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
+                                 AS_noncoding_annotations = list(c("../data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed"), c("../data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct_no_nonsyn_stopgain_stoploss.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct_no_nonsyn_stopgain_stoploss.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct_no_nonsyn_stopgain_stoploss.bed","../data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct_no_nonsyn_stopgain_stoploss.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed","../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed","../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed")),
+                                 report_proportion = 1000/18665,
+                                 chunk_partition_num =1,
+                                 node_n = 6,
+                                 mutrate_ref_files = c("../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
+                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
+                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
+                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
+)
+```
