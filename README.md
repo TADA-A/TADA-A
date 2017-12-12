@@ -62,7 +62,7 @@ chr \t start(0-based) \t end(1-based)
 
 --window_file
 
-A window file that has several columns. Each row is a 50-bp window with coordinates information, uncalibrated baseline mutation rates, its associated gene name and other features that are used to adjust baseline mutation rates. A example window file is provided as `../data/Example_windows_with_div_score.bed` and the first four rows are shown below. If you use your own window file,  the first 6 columns are required and the names of these columns should not be changed.  The rest of the columns store features that are used to adjust mutation rates so could be customized. 
+A window file that has several columns. Each row is a 50-bp window with coordinates information, uncalibrated baseline mutation rates, its associated gene name and other features that are used to adjust baseline mutation rates. A example window file is provided as `../data/Example_windows_with_div_score.bed` and the first four rows are shown below. If you use your own window file,  the first 6 columns are required and the names of these columns should not be changed.  The rest of the columns are features that are used to adjust mutation rates so could be customized. 
 
 
 |chr	|start	|end	|site_index	|genename	|mutrate	|coding	|promoter	|GC_content	|div_score|
@@ -71,4 +71,19 @@ A window file that has several columns. Each row is a 50-bp window with coordina
 |chr1	|68140	|68190	|2	|OR4F5	|5.25763e-07	|0	|1	|0.38	|0.0740137843475107|
 |chr1	|68190	|68240	|3	|OR4F5	|7.657e-07	|0	|1	|0.42	|0.0740137843475107|
 
+--sample_size
 
+A integer representing the number of individuals in the study
+
+--scale_features
+
+A vector showing the names of the features for which normalization are needed when adjusting mutation rates. 
+
+--scaling_file_name
+
+A string giving the name of the output file that gives a mutation rate scaling factor for each window, which will be used in the following steps. The first three rows of an example output file is shown below. As you can see, we use `site_index` to as the main identifier to link the window file and the mutation rate scaling file. 
+
+|site_index	|scaling_factor|
+|----|----|
+|1	|0.454254325330186|
+|2	|0.454254325330187|
