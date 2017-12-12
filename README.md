@@ -54,7 +54,7 @@ In the example code above, we used `TADA_A_adjust_mutation_rate` to adjust the b
 
 The documentations of the parameters of `TADA_A_adjust_mutation_rate` are listed below
 
-```
+
 --mut_file
 
 A DNM bed file with three columns, separated by "\t"
@@ -64,8 +64,6 @@ chr \t start(0-based) \t end(1-based)
 
 A window file that has several columns. Each row is a 50-bp window with coordinates information, uncalibrated baseline mutation rates, its associated gene name and other features that are used to adjust baseline mutation rates. A example window file is provided as `../data/Example_windows_with_div_score.bed` and the first four rows are shown below. If you use your own window file,  the first 6 columns are required and the names of these columns should not be changed.  The rest of the columns store features that are used to adjust mutation rates so could be customized. 
 
-
-```
 
 |chr	|start	|end	|site_index	|genename	|mutrate	|coding	|promoter	|GC_content	|div_score|
 |----|----|----|----|----|----|----|----|----|----|
