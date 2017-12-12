@@ -139,8 +139,8 @@ A vector with the sample sizes of all the studies. The ordering of these numbers
 
 A string representing the name of a file with the prior probability of each gene being risk gene. Below is an example of the first three rows of one prior file. 
 
-|    |    |    |    |    |
-|----|----|----|----|----|
+|    |    | 
+|----|----|
 |genename	|prior|
 |CHD8	|0.999999999694329|
 |SCN2A	|0.999999999591982|
@@ -187,3 +187,21 @@ The `base_info` object returned by `TADA_A_read_info`, which stores DNM informat
 --selected_annotations
 
 A vector indicating which annotations are used in relative risk estimation. In the feature selection step, we always estimate relative risk for each feature separately, so the vector only has one number specifying which annotation will be used. As you may member, we have multiple annotations specified by `--nonAS_noncoding_annotations` and `AS_noncoding_annotations`. We numbered these annotations from 1 to the total number of annotations. For example, if we have three nonallele-specific annotations `c("nonAS_Annotation_1", "nonAS_Annotation_2", "nonAS_Annotation_3")` specified by `--nonAS_noncoding_annotations`, and two allele-specific annotations `list(c("AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A"), c("AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A"))` specified by `AS_noncoding_annotations`. Then we have five annotations together, "nonAS_Annotation_1", "nonAS_Annotation_2", "nonAS_Annotation_3", "AS_Annotation_1", and "AS_Annotation_2" will be numbered 1, 2, 3, 4, 5, respectively. If we want to estimate the relative risk of "nonAS_Annotation_3", we set `--selected_annotations` to `c(3)`. If we want to jointly estimate the relative risks of "nonAS_Annotation_3" and "AS_Annotation_1", we set `--selected_annotations` to `c(3,4)`.
+
+--gene_prior_file
+
+A string representing the name of a file with the prior probability of each gene being risk gene. Below is an example of the first three rows of one prior file. In most scenarios, you want to be consistent with `TADA_A_read_info` regarding to the choice of priors.
+
+|    |    | 
+|----|----|
+|genename	|prior|
+|CHD8	|0.999999999694329|
+|SCN2A	|0.999999999591982|
+
+--optimization_iteration
+
+The maximum number of iterations when performing optimization. `Optim()` was used for optimization. 
+
+--mode 
+
+A string that is `"regular"` (default), or `"single_fast"`. `"single_fast"` is used when estimating RR from only one annotation ( when running `TADA_A_read_info`, only one annotation is provided) of lots of genes (e.g., all genes), would be at least 5 times faster.
