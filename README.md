@@ -206,7 +206,9 @@ The maximum number of iterations when performing optimization. `Optim()` was use
 
 A string that is `"regular"` (default), or `"single_fast"`. `"single_fast"` is used when estimating RR from only one annotation ( when running `TADA_A_read_info`, only one annotation is provided) of lots of genes (e.g., all genes), would be at least 5 times faster.
 
-[output]
+[output]:
+
+The output of `TADA_A_RR_estimate` has two objects. The first one `mle` is the output from `optim()`, the second one `rr_report` is a data.frame. Each row of the data.frame is an annotation. Columns are log(Relative risk), 95% confidence interval lower bound of log(RR), and 95% confidence interval upper bound of log(RR).
 
 #### 3.2.3 Jointly estimating the relative risks of annotations.
 
