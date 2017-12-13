@@ -248,6 +248,11 @@ With the information of all the genes recorded, we run `TADA_A_get_BFs` to get t
 TADA_A_get_BFs(data = compact_data_after_feature_selection$base_info, selected_annotations = c(1,2,3), rr = c(0.43,0.80, 1.17), additional_BF_file = "../data/Example_gene_coding_BF.txt")
 ```
 
+**Notice**
+
+Running `TADA_A_get_BFs` for all the genes may be memory intensive and takes a couple of days. We do provide an alternative strategy here. We could first partition the window file specified by `--window_file` in `TADA_A_read_info` into 50 parts. For each partition, we run simultaneously on a server `TADA_A_read_info` and store the output `base_info` in `RDS` format. It takes about 2hrs if using ~10 annotations for DNMs from five different studies (with less than 200 individuals each). We then read in the `.RDS` file iteratively and `append()` them together, and use the final object as the input for `--data` for `TADA_A_get_BFs`  
+
+
 The documentations of the parameters of `TADA_A_get_BFs` are listed below
 
 --data
