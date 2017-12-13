@@ -175,7 +175,7 @@ Estimate the relative risks of each individual annotation supplied to `TADA_A_re
 
 ```r
 for(i in 1:13){
-TADA_A_RR_estimate(data = compact_data_1$base_info, selected_annotations = c(i), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
+TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(i), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
 }
 ```
 The documentations of the parameters of `TADA_A_RR_estimate` are listed below
@@ -215,13 +215,62 @@ The output of `TADA_A_RR_estimate` has two objects. The first one `mle` is the o
 We perform joint estimation for annotations that pass the feature selection step. Example code is shown below. We set `--selected_annotations` to be `c(1,5,8)` as the 1st, 5th and 8th annotations passed the feature selection. 
 
 ```r
-TADA_A_RR_estimate(data = compact_data_1$base_info, selected_annotations = c(1,5,8), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
+TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(1,5,8), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
 ```
 
 
 #### 3.2.4 Predict risk genes
-Use the relative risks of annotations from Step 3.2.3 to identify risk genes. The example code is below. Notice, if previously in relative risk estimation, we only used top genes (e.g., top 1000 genes based on priors), then `compact_data_1$base_info`, would only contain information for these top 1000 genes. To predict risk genes for all potential genes, we need to first run `TADA_A_read_info` again over all the genes in the `window_file`. We now 
+Use the relative risks of annotations from Step 3.2.3 to identify risk genes. The example code is below. Notice, if previously in relative risk estimation, we only used top genes (e.g., top 1000 genes based on priors), then `compact_data$base_info`, would only contain information for these top 1000 genes. To predict risk genes for all potential genes, we need to first run `TADA_A_read_info` again over all the genes in the `window_file`. 
+
+The difference compared to Step 3.2.2 is that 1) now we only take in annotations that have passed the feature selection when running `TADA_A_read_info`; 2) set `--report_proportion` to 1 so all genes in the `window_file` would be included; 3) set `--chunk_partition_num` to a bigger number such as `20` to avoid memory overflow issue, which would arise when each chunk has to cover too many genomic positions. 
 
 ```r
-TADA_A_get_BFs(data = data_partition, selected_annotations = c(1,5,8), rr = c(0.43,0.80, 1.17), additional_BF_file = "../data/Example_gene_coding_BF.txt")
+compact_data_after_feature_selection <- TADA_A_read_info(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../data/Kong_cases_DNM_with_allele_info.txt","../data/Wu_cases_DNM_with_allele_info.txt", "../data/Jiang_cases_DNM_with_allele_info.txt", "../data/Michaelson_cases_DNM_with_allele_info.txt"),
+                                 window_file = "../data/Example_windows_with_div_score.bed",
+                                 mutrate_scaling_files = c("../data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
+                                 sample_sizes = c(162, 78, 32, 32, 10),
+                                 gene_prior_file = "../data/Example_gene_prior.txt",
+                                 nonAS_noncoding_annotations = c("../data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed","../other_annotations/conservation/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
+                                 AS_noncoding_annotations = list(c("../data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed")),
+                                 report_proportion = 18665/18665,
+                                 chunk_partition_num =20,
+                                 node_n = 6,
+                                 mutrate_ref_files = c("../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
+                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
+                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
+                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
+)
 ```
+
+With the information of all the genes recorded, we run `TADA_A_get_BFs` to get the risk gene prediction table. Notice now, the numbering of the three anntations become 1, 2, and 3, respectively. This is because we only used these three mutations when running `TADA_A_read_info`. We specify the relative risks in the log scale to `rr` for these three annotations sequentially in a vector. We also provide a Bayes factor table based on independent external information to help boost the power of risk gene prediction. 
+
+```r
+TADA_A_get_BFs(data = compact_data_after_feature_selection$base_info, selected_annotations = c(1,2,3), rr = c(0.43,0.80, 1.17), additional_BF_file = "../data/Example_gene_coding_BF.txt")
+```
+
+The documentations of the parameters of `TADA_A_get_BFs` are listed below
+
+--data
+
+The `base_info` object returned from `TADA_A_RR_estimate`, which stores DNM information, mutation rates, and annotations for each gene in a compact format. 
+
+
+--selected_annotations
+
+A vector indicating which annotations are selected in risk gene prediction. When using `TADA_A_read_info` to record information for all the genes, we have multiple annotations specified by `--nonAS_noncoding_annotations` and `AS_noncoding_annotations`. We numbered these annotations from 1 to the total number of annotations. For example, if we have three nonallele-specific annotations `c("nonAS_Annotation_1", "nonAS_Annotation_2", "nonAS_Annotation_3")` specified by `--nonAS_noncoding_annotations`, and two allele-specific annotations `list(c("AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A", "AS_Annotation_1_alt_A"), c("AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A", "AS_Annotation_2_alt_A"))` specified by `AS_noncoding_annotations`. Then we have five annotations together, "nonAS_Annotation_1", "nonAS_Annotation_2", "nonAS_Annotation_3", "AS_Annotation_1", and "AS_Annotation_2" will be numbered 1, 2, 3, 4, 5, respectively. If we want to predict risk genes using "nonAS_Annotation_3", we set `--selected_annotations` to `c(3)`. If we want to predict risk genes using "nonAS_Annotation_3" and "AS_Annotation_1", we set `--selected_annotations` to `c(3,4)`.
+
+--rr
+
+A vector giving the log(relative risk) of features selected in `--selected_annotations`. The ordering must be consistent between `--rr` and `--selected_annotations`
+
+--additional_BF_file
+
+The name of a file with Bayes factors from independent external information. For example, we may use Bayes factors based on coding mutations from WES studies when our main analyses was performed using noncoding mutations from WGS studies. If we don't have additional bayes factors to use, we could use a file with all the Bayes factors equal to 1 here.  The first three rows of an `--additional_BF_file` is shown below
+
+|genename	|coding_BF|
+|----|----|
+|CHD8	|7317632288.7186|
+|SCN2A	|17086885921.6339|
+
+
+
