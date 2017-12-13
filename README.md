@@ -220,5 +220,8 @@ TADA_A_RR_estimate(data = compact_data_1$base_info, selected_annotations = c(1,5
 
 
 #### 3.2.4 Predict risk genes
+Use the relative risks of annotations from Step 3.2.3 to identify risk genes. The example code is below. Notice, if previously in relative risk estimation, we only used top genes (e.g., top 1000 genes based on priors), then `compact_data_1$base_info`, would only contain information for these top 1000 genes. To predict risk genes for all potential genes, we need to first run `TADA_A_read_info` again over all the genes in the `window_file`. We now 
 
-
+```r
+TADA_A_get_BFs(data = data_partition, selected_annotations = c(1,5,8), rr = c(0.43,0.80, 1.17), additional_BF_file = "../data/Example_gene_coding_BF.txt")
+```
