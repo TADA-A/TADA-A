@@ -288,3 +288,13 @@ The name of a file with Bayes factors from independent external information. For
 |NRXN1	|1.079917	|2.936408	|4.016325	|2.944436	|18.84801	|55.49677	|0.1982470	|0.0814069|
 |PNPLA7	|1.114084	|2.863029	|3.977114	|3.046777	|17.51450	|53.36279	|0.2273822	|0.0866883|
 |TANC2	|1.140735	|2.798141	|3.938877	|3.129068	|16.41411	|51.36087	|0.2697554	|0.0942703|
+
+  + genename: The name of a gene.
+  + logBF_noncoding: The log(Bayes Factor) of the gene using WGS noncoding data.
+  + logBF_coding: The log(Bayes factor) of the gene using independent external Bayes factor, here from WES coding data.
+  + logBF_all: The summation of logBF_noncoding and logBF_coding.
+  + BF_noncoding: The Bayes Factor of the gene using WGS noncoding data.
+  + BF_coding: The Bayes factor of the gene using independent external Bayes factor, here from WES coding data.
+  + BF_all: The multipication of BF_noncoding and BF_coding.
+  + FDR_coding: The FDR based on independent external information.
+  + FDR_all: The FDR based on combining the independent external information and the data that we analyzed. 
