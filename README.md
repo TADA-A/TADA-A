@@ -205,3 +205,18 @@ The maximum number of iterations when performing optimization. `Optim()` was use
 --mode 
 
 A string that is `"regular"` (default), or `"single_fast"`. `"single_fast"` is used when estimating RR from only one annotation ( when running `TADA_A_read_info`, only one annotation is provided) of lots of genes (e.g., all genes), would be at least 5 times faster.
+
+[output]
+
+#### 3.2.3 Jointly estimating the relative risks of annotations.
+
+We perform joint estimation for annotations that pass the feature selection step. Example code is shown below. We set `--selected_annotations` to be `c(1,5,8)` as the 1st, 5th and 8th annotations passed the feature selection. 
+
+```r
+TADA_A_RR_estimate(data = compact_data_1$base_info, selected_annotations = c(1,5,8), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
+```
+
+
+#### 3.2.4 Predict risk genes
+
+
