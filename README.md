@@ -283,7 +283,7 @@ The name of a file with Bayes factors from independent external information. For
 `$gene_BF_table`:
 
 |genename	|logBF_noncoding	|logBF_coding	|logBF_all	|BF_noncoding	|BF_coding	|BF_all	|FDR_coding	|FDR_all|
-|----|----|----|----|----|----|----|----|----|----|
+|----|----|----|----|----|----|----|----|----|
 |APBB1	|2.789694	|2.325413	|5.115108	|16.276045	|10.23091	|166.51873	|0.4502329	|0.0261426|
 |NRXN1	|1.079917	|2.936408	|4.016325	|2.944436	|18.84801	|55.49677	|0.1982470	|0.0814069|
 |PNPLA7	|1.114084	|2.863029	|3.977114	|3.046777	|17.51450	|53.36279	|0.2273822	|0.0866883|
