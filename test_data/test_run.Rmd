@@ -13,7 +13,7 @@ library(parallel)
 source("../lib/TADA_Annotation.R")
 ```
 
-### adjust mutation rate 
+### Adjust mutation rate 
 
 ```{r}
 TADA_A_adjust_mutation_rate(mut_file = "./test_simulated_DNM.bed ",
@@ -23,7 +23,7 @@ TADA_A_adjust_mutation_rate(mut_file = "./test_simulated_DNM.bed ",
                             scaling_file_name = "test_simulated_windows_mutrate_with_div_score_scaling_file_for_test_DNM.txt")
 ```
 
-### Estimate relative risk
+### Read in DNM data, annotation data and mutation rate data
 ```{r}
 compact_data <- TADA_A_read_info(mut_files = c("test_simulated_DNM_with_allele_info.txt"),
                                  window_file = "test_windows.txt",
@@ -40,6 +40,7 @@ compact_data <- TADA_A_read_info(mut_files = c("test_simulated_DNM_with_allele_i
 
 ```
 
+### Estimate relative risks
 ```{r}
 TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(1), gene_prior_file = "test_gene_prior.txt", optimization_iteration = 2000)
 ```
