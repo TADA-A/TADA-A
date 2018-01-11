@@ -1,0 +1,43 @@
+---
+title: "Test Run"
+output: html_document
+---
+
+Recalibrate mutation rate with divergence score for manuscript data.
+
+```{r}
+library(data.table)
+library(parallel)
+source("../lib/TADA_Annotation.R")
+```
+
+### adjust mutation rate 
+
+```{r}
+TADA_A_adjust_mutation_rate(mut_file = "./test_simulated_DNM.bed ",
+                            window_file = "./test_windows.txt",
+                            sample_size = 5000, 
+                            scale_features = c("GC_content", "div_score"),
+                            scaling_file_name = "test_simulated_windows_mutrate_with_div_score_scaling_file_for_test_DNM.txt")
+```
+
+### Estimate relative risk
+```{r}
+compact_data <- TADA_A_read_info(mut_files = c("test_simulated_DNM_with_allele_info.txt"),
+                                 window_file = "test_windows.txt",
+                                 mutrate_scaling_files = c("test_simulated_windows_mutrate_with_div_score_scaling_file_for_test_DNM.txt"),
+                                 sample_sizes = c(5000),
+                                 gene_prior_file = "test_gene_prior.txt",
+                                 nonAS_noncoding_annotations = c("test_non_allele_specific_annotation_1.bed"),
+                                 AS_noncoding_annotations = NA,
+                                 report_proportion = 2000/18665,
+                                 chunk_partition_num =1,
+                                 node_n = 1,
+                                 mutrate_ref_files = c("test_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw", "test_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw", "test_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw", "test_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
+)
+
+```
+
+```{r}
+TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(1), gene_prior_file = "test_gene_prior.txt", optimization_iteration = 2000)
+```
