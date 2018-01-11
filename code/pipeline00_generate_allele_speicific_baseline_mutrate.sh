@@ -4,10 +4,6 @@
 sed '1d' ../data/Example_windows.bed | awk {'print $1"\t"$2-1"\t"$3+1"\t"$4'} > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed
 
 
-
-
-
-
 # Step 2: Get the nucleotide sequence of each interval, in tab format
 bedtools getfasta -fi ../other_annotations/genome_build/hg19.fasta -bed ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed -fo ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta -tab
 

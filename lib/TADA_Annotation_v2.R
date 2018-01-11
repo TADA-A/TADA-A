@@ -69,6 +69,53 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
 }
 
 
+TADA_A_adjust_mutation_rate_get_mutation_number <- function(mut_file, window_file, sample_size, scale_features, scaling_file_name){
+  # [mut_file] is the file with DNM infomation in a BED format. 0-based start and 1-based end. e.g., "../data/Example_windows.bed"
+  # The first 4 columns must be chr, start, end, and site_index of genomic windows.
+  # [window_file] is the file with genomic windows. Each line represents one window. The columns are "chr", "start", "end", "genename", and "mutrate", followed by features that might affect local background mutation rate.
+  # [sample_size] is the number of individuals. 
+  # [scale_features] is a vector of the names of features that need to be scaled, this is recommended to apply to continuous features, such as GC content, to make easier the interpretation of the effect sizes of features. 
+  # [scaling_file_name] is the name of the file that has the scaling factor for each genomic interval in [window_file]. 1st column is site_index, 2nd column is scaling factor of mutation rate. 
+  
+  # prefix for temporary files that will be deleted at the end of the pipeline
+  prefix <- system("date +%s", intern = TRUE)
+  prefix <- paste("tmp/", prefix, sep = "")
+  
+  # make a tmp folder for tmp files
+  system("mkdir -p tmp")
+  command <- paste("sed -n '1!p' ", window_file, " | awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} > ", paste(prefix, "_temp_windows.bed", sep = ""), sep = "")
+  system(command)
+  # get the number of SNVs for each window
+  command <- paste("bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
+  system(command)
+  # read in the file with the number of SNVs for each window
+  coverage <- fread(paste(prefix,"_temp_coverage.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+  coverage <- coverage[,1:5]
+  colnames(coverage) <- c("chr","start","end","site_index","mut_count")
+  # read in the window file that has feature annotations that might affect mutation rates
+  windows <- fread(window_file, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+  feature_number <- dim(windows)[2] - 6
+  # merge [window] and [coverage] to link mutation count with feature annotations
+  coverage <- coverage[windows[,-1:-3], on="site_index"]
+  
+  coverage <- coverage[mutrate !=0]
+  for(i in 1:length(scale_features)){
+    coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+  }
+  # write the formula
+  f <- paste("mut_count ~ ", paste(colnames(coverage)[8 : (8 + feature_number -1)], collapse = " + "), " + offset(log(2*mutrate*sample_size))", sep = "")
+  #fit mutation rate model using a fixed set of features not including histone modification marks. 
+  out.offset <- glm(as.formula(f), family = poisson, data = coverage)
+  scaling <- data.table(site_index = coverage$site_index, scaling_factor = out.offset$fitted.values / (2 * coverage$mutrate * sample_size))
+  fwrite(scaling, scaling_file_name, col.names = TRUE, row.names = FALSE, sep = "\t", quote = FALSE)
+  # remove intermediate files
+  system(paste("rm ", prefix, "_temp*", sep = ""))
+  # the return value is the effect sizes of feature annotations on background mutation rates. 
+  return(list(summary(out.offset)$coeff, sum(coverage$mut_count)))
+}
+
+
+
 # define a function that is used in the allele-specific model
 # 
 TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../data/Kong_cases_DNM_with_allele_info.txt","../data/Wu_cases_DNM_with_allele_info.txt", "../data/Jiang_cases_DNM_with_allele_info.txt", "../data/Michaelson_cases_DNM_with_allele_info.txt"),

@@ -3,6 +3,8 @@ title: "Test Run"
 output: html_document
 ---
 
+> Bedtools need to be installed and added to your PATH. We suggest using v2.17.0, which has been provided in the external_tools folder for you to install. Other versions might be incompatible because of modification of input arguments for some of the sub-functions of bedtools.
+
 Recalibrate mutation rate with divergence score for manuscript data.
 
 ```{r}
