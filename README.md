@@ -10,11 +10,15 @@ With the fast pace of technology revolution in the field of genomics, whole-exom
 Bedtools need to be installed and added to your PATH. We suggest using v2.17.0, which has been provided in the companion files for you to download. Other versions might be incompatible because of modification of input arguments for some of the sub-functions of bedtools. 
 
 ### 2.2 bigWigAverageOverBed
-This executable has been added in the `external_tools` folder.
+This executable has been added in the `external_tools` folder. 
 
-## 3. User guide
+## 3. Test run
 
-### 3.1 Step 1: Adjust mutation rates for each study.
+We provided a `test_run.Rmd` in the `test_data` folder. Running the `test_run.Rmd` would generate a `test_run.html`, which should be the same as the `test_run_results.html` in the same folder. It takes about 5mins to finish (Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz).
+
+## 4. User guide
+
+### 4.1 Step 1: Adjust mutation rates for each study.
 Make a R/Rmd file in the `analysis` folder. And follow the examples below to build your own analysis pipeline.
 
 ```r
@@ -89,9 +93,9 @@ A string giving the name of the output file that gives a mutation rate scaling f
 |2	|0.454254325330187|
 
 
-### 3.2 Step 2: Feature selection of annotations.
+### 4.2 Step 2: Feature selection of annotations.
 
-#### 3.2.1 Read in DNM data and annotation
+#### 4.2.1 Read in DNM data and annotation
 
 We read DNM data and annotation data using `TADA_A_read_info` and store all the information into `compact_data`, a compact data form benefiting from our categorization trick. This categorization trick greatly reduced the size of the data and facilitates fast parameter inference. 
 ```r
@@ -169,7 +173,7 @@ The number of computational nodes that needs to be used.
 
 A vector specifying the names of the base-level allele-specific baseline mutation rate files. These files are in the bigWiggle format, storing base-level mutation rates for mutant allele as "A", "C", "G", and "T", sequentially. Users could use their own mutation rate models but need to build their own base-level allele-specific mutation rate files accordingly. 
 
-#### 3.2.2 Feature selection.
+#### 4.2.2 Feature selection.
 
 Estimate the relative risks of each individual annotation supplied to `TADA_A_read_info`, and only use the sinificant ones for the next round of joint estimation. The code below performs relative risk estimation. We have 13 features here, so we estimate the relative risk for each feature sequentially.
 
@@ -210,7 +214,7 @@ A string that is `"regular"` (default), or `"single_fast"`. `"single_fast"` is u
 
 The output of `TADA_A_RR_estimate` has two objects. The first one `mle` is the output from `optim()`, the second one `rr_report` is a data.frame. Each row of the data.frame is an annotation. Columns are log(Relative risk), 95% confidence interval lower bound of log(RR), and 95% confidence interval upper bound of log(RR).
 
-#### 3.2.3 Jointly estimating the relative risks of annotations.
+#### 4.2.3 Jointly estimating the relative risks of annotations.
 
 We perform joint estimation for annotations that pass the feature selection step. Example code is shown below. We set `--selected_annotations` to be `c(1,5,8)` as the 1st, 5th and 8th annotations passed the feature selection. 
 
@@ -219,7 +223,7 @@ TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(1,5,8
 ```
 
 
-#### 3.2.4 Predict risk genes
+#### 4.2.4 Predict risk genes
 Use the relative risks of annotations from Step 3.2.3 to identify risk genes. The example code is below. Notice, if previously in relative risk estimation, we only used top genes (e.g., top 1000 genes based on priors), then `compact_data$base_info`, would only contain information for these top 1000 genes. To predict risk genes for all potential genes, we need to first run `TADA_A_read_info` again over all the genes in the `window_file`. 
 
 The difference compared to Step 3.2.2 is that 1) now we only take in annotations that have passed the feature selection when running `TADA_A_read_info`; 2) set `--report_proportion` to 1 so all genes in the `window_file` would be included; 3) set `--chunk_partition_num` to a bigger number such as `20` to avoid memory overflow issue, which would arise when each chunk has to cover too many genomic positions. 
