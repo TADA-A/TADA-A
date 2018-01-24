@@ -23,35 +23,35 @@ Make a R/Rmd file in the `analysis` folder. And follow the examples below to bui
 
 ```r
 source("../lib/TADA_Annotation.R")
-TADA_A_adjust_mutation_rate(mut_file = "../data/Yuen_NM2015_cases_DNM.bed",
-                            window_file = "../data/Example_windows_with_div_score.bed",
+TADA_A_adjust_mutation_rate(mut_file = "../MS_data/Yuen_NM2015_cases_DNM.bed",
+                            window_file = "../MS_data/Example_windows_with_div_score.bed",
                             sample_size = 162, 
                             scale_features = c("GC_content", "div_score"),
-                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt")
+                            scaling_file_name = "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt")
 
-TADA_A_adjust_mutation_rate(mut_file = "../data/Kong_cases_DNM.bed",
-                            window_file = "../data/Example_windows_with_div_score.bed",
+TADA_A_adjust_mutation_rate(mut_file = "../MS_data/Kong_cases_DNM.bed",
+                            window_file = "../MS_data/Example_windows_with_div_score.bed",
                             sample_size = 78, 
                             scale_features = c("GC_content", "div_score"), 
-                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt")
+                            scaling_file_name = "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt")
 
-TADA_A_adjust_mutation_rate(mut_file = "../data/Wu_cases_DNM.bed",
-                            window_file = "../data/Example_windows_with_div_score.bed",
+TADA_A_adjust_mutation_rate(mut_file = "../MS_data/Wu_cases_DNM.bed",
+                            window_file = "../MS_data/Example_windows_with_div_score.bed",
                             sample_size = 32, 
                             scale_features = c("GC_content", "div_score"), 
-                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt")
+                            scaling_file_name = "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt")
 
-TADA_A_adjust_mutation_rate(mut_file = "../data/Jiang_cases_DNM.bed",
-                            window_file = "../data/Example_windows_with_div_score.bed",
+TADA_A_adjust_mutation_rate(mut_file = "../MS_data/Jiang_cases_DNM.bed",
+                            window_file = "../MS_data/Example_windows_with_div_score.bed",
                             sample_size = 32, 
                             scale_features = c("GC_content", "div_score"), 
-                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt")
+                            scaling_file_name = "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt")
 
-TADA_A_adjust_mutation_rate(mut_file = "../data/Michaelson_cases_DNM.bed",
-                            window_file = "../data/Example_windows_with_div_score.bed",
+TADA_A_adjust_mutation_rate(mut_file = "../MS_data/Michaelson_cases_DNM.bed",
+                            window_file = "../MS_data/Example_windows_with_div_score.bed",
                             sample_size = 10, 
                             scale_features = c("GC_content", "div_score"), 
-                            scaling_file_name = "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt")
+                            scaling_file_name = "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt")
 ```
 
 In the example code above, we used `TADA_A_adjust_mutation_rate` to adjust the baseline observed mutation rate for each study. We used DNM data from five different studies.
@@ -66,16 +66,16 @@ chr \t start(0-based) \t end(1-based)
 
 --window_file
 
-A window file that has several columns. Each row is a 50-bp window with coordinates information, uncalibrated baseline mutation rates, its associated gene name and other features that are used to adjust baseline mutation rates. A example window file is provided as `../data/Example_windows_with_div_score.bed` and the first four rows are shown below. If you use your own window file,  the first 6 columns are required and the names of these columns should not be changed.  The rest of the columns are features that are used to adjust mutation rates so could be customized. 
+A window file that has several columns. Each row is a 50-bp window with coordinates information, uncalibrated baseline mutation rates, its associated gene name and other features that are used to adjust baseline mutation rates. A example window file is provided as `../MS_data/Example_windows_with_div_score.bed` and the first four rows are shown below. If you use your own window file,  the first 6 columns are required and the names of these columns should not be changed.  The rest of the columns are features that are used to adjust mutation rates so could be customized. 
 
 
 |chr	|start	|end	|site_index	|genename	|mutrate	|coding	|promoter	|GC_content	|div_score|
-|----|----|----|----|----|----|----|----|----|----|
-|chr1	|68090	|68140	|1	|OR4F5	|7.29662e-07	|0	|1	|0.38	|0.0740137843475107|
-|chr1	|68140	|68190	|2	|OR4F5	|5.25763e-07	|0	|1	|0.38	|0.0740137843475107|
-|chr1	|68190	|68240	|3	|OR4F5	|7.657e-07	|0	|1	|0.42	|0.0740137843475107|
-
---sample_size
+  |----|----|----|----|----|----|----|----|----|----|
+  |chr1	|68090	|68140	|1	|OR4F5	|7.29662e-07	|0	|1	|0.38	|0.0740137843475107|
+  |chr1	|68140	|68190	|2	|OR4F5	|5.25763e-07	|0	|1	|0.38	|0.0740137843475107|
+  |chr1	|68190	|68240	|3	|OR4F5	|7.657e-07	|0	|1	|0.42	|0.0740137843475107|
+  
+  --sample_size
 
 A integer representing the number of individuals in the study
 
@@ -88,31 +88,31 @@ A vector showing the names of the features for which normalization are needed wh
 A string giving the name of the output file that gives a mutation rate scaling factor for each window, which will be used in the following steps. The first three rows of an example output file is shown below. As you can see, we use `site_index` as the main identifier to link the window file and the mutation rate scaling file. 
 
 |site_index	|scaling_factor|
-|----|----|
-|1	|0.454254325330186|
-|2	|0.454254325330187|
-
-
-### 4.2 Step 2: Feature selection of annotations.
-
-#### 4.2.1 Read in DNM data and annotation
-
-We read DNM data and annotation data using `TADA_A_read_info` and store all the information into `compact_data`, a compact data form benefiting from our categorization trick. This categorization trick greatly reduced the size of the data and facilitates fast parameter inference. 
+  |----|----|
+  |1	|0.454254325330186|
+  |2	|0.454254325330187|
+  
+  
+  ### 4.2 Step 2: Feature selection of annotations.
+  
+  #### 4.2.1 Read in DNM data and annotation
+  
+  We read DNM data and annotation data using `TADA_A_read_info` and store all the information into `compact_data`, a compact data form benefiting from our categorization trick. This categorization trick greatly reduced the size of the data and facilitates fast parameter inference. 
 ```r
-compact_data <- TADA_A_read_info(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../data/Kong_cases_DNM_with_allele_info.txt","../data/Wu_cases_DNM_with_allele_info.txt", "../data/Jiang_cases_DNM_with_allele_info.txt", "../data/Michaelson_cases_DNM_with_allele_info.txt"),
-                                 window_file = "../data/Example_windows_with_div_score.bed",
-                                 mutrate_scaling_files = c("../data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
+compact_data <- TADA_A_read_info(mut_files = c("../MS_data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../MS_data/Kong_cases_DNM_with_allele_info.txt","../MS_data/Wu_cases_DNM_with_allele_info.txt", "../MS_data/Jiang_cases_DNM_with_allele_info.txt", "../MS_data/Michaelson_cases_DNM_with_allele_info.txt"),
+                                 window_file = "../MS_data/Example_windows_with_div_score.bed",
+                                 mutrate_scaling_files = c("../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
                                  sample_sizes = c(162, 78, 32, 32, 10),
-                                 gene_prior_file = "../data/Example_gene_prior.txt",
-                                 nonAS_noncoding_annotations = c("../data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed", "../data/Epigenome_E081_E082_intersection__within_10kb_and_promoter_no_utr.bed", "../data/Encode_DHS_union_within_10kb_and_promoter_no_utr.bed","../data/170820_gerp_gt2.all.sorted.merged.bed","../other_annotations/conservation/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed", "../other_annotations/conservation/Epigenome_E081_E082_intersection__within_10kb_and_promoter_no_utr_gerp_gt2.bed", "../other_annotations/conservation/Encode_DHS_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
-                                 AS_noncoding_annotations = list(c("../data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed","../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed","../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed"), c("../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../other_annotations/allele_specific_CADD/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed")),
+                                 gene_prior_file = "../MS_data/Example_gene_prior.txt",
+                                 nonAS_noncoding_annotations = c("../MS_data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed", "../MS_data/Epigenome_E081_E082_intersection__within_10kb_and_promoter_no_utr.bed", "../MS_data/Encode_DHS_union_within_10kb_and_promoter_no_utr.bed","../MS_data/170820_gerp_gt2.all.sorted.merged.bed","../MS_data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed", "../MS_data/Epigenome_E081_E082_intersection__within_10kb_and_promoter_no_utr_gerp_gt2.bed", "../MS_data/Encode_DHS_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
+                                 AS_noncoding_annotations = list(c("../MS_data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../MS_data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../MS_data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../MS_data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed"), c("../MS_data/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr.bed", "../MS_data/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr.bed", "../MS_data/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr.bed", "../MS_data/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr.bed"), c("../MS_data/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed", "../MS_data/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed","../MS_data/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed","../MS_data/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_Noonan_brain_roadmap_union.bed"), c("../MS_data/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../MS_data/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../MS_data/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed", "../MS_data/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_E081_E082_intersection.bed"), c("../MS_data/whole_genome_SNVs_gt15_altA_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../MS_data/whole_genome_SNVs_gt15_altC_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../MS_data/whole_genome_SNVs_gt15_altG_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed", "../MS_data/whole_genome_SNVs_gt15_altT_within_10kb_and_promoter_no_utr_with_Encode_DHS_union.bed")),
                                  report_proportion = 1000/18665,
                                  chunk_partition_num =1,
                                  node_n = 6,
-                                 mutrate_ref_files = c("../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
-                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
-                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
-                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
+                                 mutrate_ref_files = c("../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
+                                                       "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
+                                                       "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
+                                                       "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
 )
 ```
 The documentations of the parameters of `TADA_A_read_info` are listed below
@@ -122,12 +122,12 @@ The documentations of the parameters of `TADA_A_read_info` are listed below
 A vector with names of DNM files. Notice here allelic information needs to be included as our model is allele-aware. Below is an example of the first three rows of one DNM file.
 
 |    |    |    |    |    |
-|----|----|----|----|----|
-|chr3	|26636920	|26636921	|A	|G|
-|chr3	|70569020	|70569021	|A	|C|
-|chr3	|82677644	|82677645	|A	|G|
-
---window_file
+  |----|----|----|----|----|
+  |chr3	|26636920	|26636921	|A	|G|
+  |chr3	|70569020	|70569021	|A	|C|
+  |chr3	|82677644	|82677645	|A	|G|
+  
+  --window_file
 
 Must be the same window file used in the mutation rate adjustion step (Step 3.1).
 
@@ -144,12 +144,12 @@ A vector with the sample sizes of all the studies. The ordering of these numbers
 A string representing the name of a file with the prior probability of each gene being risk gene. Below is an example of the first three rows of one prior file. 
 
 |    |    | 
-|----|----|
-|genename	|prior|
-|CHD8	|0.999999999694329|
-|SCN2A	|0.999999999591982|
-
---nonAS_noncoding_annotations
+  |----|----|
+  |genename	|prior|
+  |CHD8	|0.999999999694329|
+  |SCN2A	|0.999999999591982|
+  
+  --nonAS_noncoding_annotations
 
 A vector representing the names of non-allele specific annotations. All annotations should be in a 3-column BED format. Each annotation file covers all the bases (or at least all the bases included in the window file) that have that annotation.
 
@@ -168,7 +168,7 @@ A number specifying how many partitions will the `window_file` be split into. We
 --node_n
 
 The number of computational nodes that needs to be used.
-                                 
+
 --mutrate_ref_files
 
 A vector specifying the names of the base-level allele-specific baseline mutation rate files. These files are in the bigWiggle format, storing base-level mutation rates for mutant allele as "A", "C", "G", and "T", sequentially. Users could use their own mutation rate models but need to build their own base-level allele-specific mutation rate files accordingly. 
@@ -179,7 +179,7 @@ Estimate the relative risks of each individual annotation supplied to `TADA_A_re
 
 ```r
 for(i in 1:13){
-TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(i), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
+  TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(i), gene_prior_file = "../MS_data/Example_gene_prior.txt", optimization_iteration = 2000)
 }
 ```
 The documentations of the parameters of `TADA_A_RR_estimate` are listed below
@@ -197,12 +197,12 @@ A vector indicating which annotations are used in relative risk estimation. In t
 A string representing the name of a file with the prior probability of each gene being risk gene. Below is an example of the first three rows of one prior file. In most scenarios, you want to be consistent with `TADA_A_read_info` regarding to the choice of priors.
 
 |    |    | 
-|----|----|
-|genename	|prior|
-|CHD8	|0.999999999694329|
-|SCN2A	|0.999999999591982|
-
---optimization_iteration
+  |----|----|
+  |genename	|prior|
+  |CHD8	|0.999999999694329|
+  |SCN2A	|0.999999999591982|
+  
+  --optimization_iteration
 
 The maximum number of iterations when performing optimization. `Optim()` was used for optimization. The search space for when only one parameter is estimated is from -1 to 10.
 
@@ -211,15 +211,15 @@ The maximum number of iterations when performing optimization. `Optim()` was use
 A string that is `"regular"` (default), or `"single_fast"`. `"single_fast"` is used when estimating RR from only one annotation ( when running `TADA_A_read_info`, only one annotation is provided) of lots of genes (e.g., all genes), would be at least 5 times faster.
 
 [output]:
-
-The output of `TADA_A_RR_estimate` has two objects. The first one `mle` is the output from `optim()`, the second one `rr_report` is a data.frame. Each row of the data.frame is an annotation. Columns are log(Relative risk), 95% confidence interval lower bound of log(RR), and 95% confidence interval upper bound of log(RR).
+  
+  The output of `TADA_A_RR_estimate` has two objects. The first one `mle` is the output from `optim()`, the second one `rr_report` is a data.frame. Each row of the data.frame is an annotation. Columns are log(Relative risk), 95% confidence interval lower bound of log(RR), and 95% confidence interval upper bound of log(RR).
 
 #### 4.2.3 Jointly estimating the relative risks of annotations.
 
 We perform joint estimation for annotations that pass the feature selection step. Example code is shown below. We set `--selected_annotations` to be `c(1,5,8)` as the 1st, 5th and 8th annotations passed the feature selection. 
 
 ```r
-TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(1,5,8), gene_prior_file = "../data/Example_gene_prior.txt", optimization_iteration = 2000)
+TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(1,5,8), gene_prior_file = "../MS_data/Example_gene_prior.txt", optimization_iteration = 2000)
 ```
 
 
@@ -229,32 +229,32 @@ Use the relative risks of annotations from Step 3.2.3 to identify risk genes. Th
 The difference compared to Step 3.2.2 is that 1) now we only take in annotations that have passed the feature selection when running `TADA_A_read_info`; 2) set `--report_proportion` to 1 so all genes in the `window_file` would be included; 3) set `--chunk_partition_num` to a bigger number such as `20` to avoid memory overflow issue, which would arise when each chunk has to cover too many genomic positions. 
 
 ```r
-compact_data_after_feature_selection <- TADA_A_read_info(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../data/Kong_cases_DNM_with_allele_info.txt","../data/Wu_cases_DNM_with_allele_info.txt", "../data/Jiang_cases_DNM_with_allele_info.txt", "../data/Michaelson_cases_DNM_with_allele_info.txt"),
-                                 window_file = "../data/Example_windows_with_div_score.bed",
-                                 mutrate_scaling_files = c("../data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
-                                 sample_sizes = c(162, 78, 32, 32, 10),
-                                 gene_prior_file = "../data/Example_gene_prior.txt",
-                                 nonAS_noncoding_annotations = c("../data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed","../other_annotations/conservation/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
-                                 AS_noncoding_annotations = list(c("../data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed")),
-                                 report_proportion = 18665/18665,
-                                 chunk_partition_num =20,
-                                 node_n = 6,
-                                 mutrate_ref_files = c("../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
-                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
-                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
-                      "../other_annotations/Mark_Daly_mutrate/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
+compact_data_after_feature_selection <- TADA_A_read_info(mut_files = c("../MS_data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../MS_data/Kong_cases_DNM_with_allele_info.txt","../MS_data/Wu_cases_DNM_with_allele_info.txt", "../MS_data/Jiang_cases_DNM_with_allele_info.txt", "../MS_data/Michaelson_cases_DNM_with_allele_info.txt"),
+                                                         window_file = "../MS_data/Example_windows_with_div_score.bed",
+                                                         mutrate_scaling_files = c("../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
+                                                         sample_sizes = c(162, 78, 32, 32, 10),
+                                                         gene_prior_file = "../MS_data/Example_gene_prior.txt",
+                                                         nonAS_noncoding_annotations = c("../MS_data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed","../other_annotations/conservation/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
+                                                         AS_noncoding_annotations = list(c("../MS_data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../MS_data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../MS_data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../MS_data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed")),
+                                                         report_proportion = 18665/18665,
+                                                         chunk_partition_num =20,
+                                                         node_n = 6,
+                                                         mutrate_ref_files = c("../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
+                                                                               "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
+                                                                               "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
+                                                                               "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw")
 )
 ```
 
 With the information of all the genes recorded, we run `TADA_A_get_BFs` to get the risk gene prediction table. Notice now, the numbering of the three anntations become 1, 2, and 3, respectively. This is because we only used these three mutations when running `TADA_A_read_info`. We specify the relative risks in the log scale to `rr` for these three annotations sequentially in a vector. We also provide a Bayes factor table based on independent external information to help boost the power of risk gene prediction. 
 
 ```r
-TADA_A_get_BFs(data = compact_data_after_feature_selection$base_info, selected_annotations = c(1,2,3), rr = c(0.43,0.80, 1.17), additional_BF_file = "../data/Example_gene_coding_BF.txt")
+TADA_A_get_BFs(data = compact_data_after_feature_selection$base_info, selected_annotations = c(1,2,3), rr = c(0.43,0.80, 1.17), additional_BF_file = "../MS_data/Example_gene_coding_BF.txt")
 ```
 
 **Notice**
-
-Running `TADA_A_get_BFs` for all the genes may be memory intensive and takes a couple of days. We do provide an alternative strategy here. We could first partition the window file specified by `--window_file` in `TADA_A_read_info` into 50 parts. For each partition, we run simultaneously on a server `TADA_A_read_info` and store the output `base_info` in `RDS` format. It takes about 2hrs if using ~10 annotations for DNMs from five different studies (with less than 200 individuals each). We then read in the `.RDS` file iteratively and `append()` them together, and use the final object as the input for `--data` for `TADA_A_get_BFs`  
+  
+  Running `TADA_A_get_BFs` for all the genes may be memory intensive and takes a couple of days. We do provide an alternative strategy here. We could first partition the window file specified by `--window_file` in `TADA_A_read_info` into 50 parts. For each partition, we run simultaneously on a server `TADA_A_read_info` and store the output `base_info` in `RDS` format. It takes about 2hrs if using ~10 annotations for DNMs from five different studies (with less than 200 individuals each). We then read in the `.RDS` file iteratively and `append()` them together, and use the final object as the input for `--data` for `TADA_A_get_BFs`  
 
 
 The documentations of the parameters of `TADA_A_get_BFs` are listed below
@@ -293,12 +293,12 @@ The name of a file with Bayes factors from independent external information. For
 |PNPLA7	|1.114084	|2.863029	|3.977114	|3.046777	|17.51450	|53.36279	|0.2273822	|0.0866883|
 |TANC2	|1.140735	|2.798141	|3.938877	|3.129068	|16.41411	|51.36087	|0.2697554	|0.0942703|
 
-  + genename: The name of a gene.
-  + logBF_noncoding: The log(Bayes Factor) of the gene using WGS noncoding data.
-  + logBF_coding: The log(Bayes factor) of the gene using independent external Bayes factor, here from WES coding data.
-  + logBF_all: The summation of logBF_noncoding and logBF_coding.
-  + BF_noncoding: The Bayes Factor of the gene using WGS noncoding data.
-  + BF_coding: The Bayes factor of the gene using independent external Bayes factor, here from WES coding data.
-  + BF_all: The multipication of BF_noncoding and BF_coding.
-  + FDR_coding: The FDR based on independent external information.
-  + FDR_all: The FDR based on combining the independent external information and the data that we analyzed. 
++ genename: The name of a gene.
++ logBF_noncoding: The log(Bayes Factor) of the gene using WGS noncoding data.
++ logBF_coding: The log(Bayes factor) of the gene using independent external Bayes factor, here from WES coding data.
++ logBF_all: The summation of logBF_noncoding and logBF_coding.
++ BF_noncoding: The Bayes Factor of the gene using WGS noncoding data.
++ BF_coding: The Bayes factor of the gene using independent external Bayes factor, here from WES coding data.
++ BF_all: The multipication of BF_noncoding and BF_coding.
++ FDR_coding: The FDR based on independent external information.
++ FDR_all: The FDR based on combining the independent external information and the data that we analyzed. 
