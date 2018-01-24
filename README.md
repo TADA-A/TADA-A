@@ -254,7 +254,46 @@ TADA_A_get_BFs(data = compact_data_after_feature_selection$base_info, selected_a
 
 **Notice**
   
-  Running `TADA_A_get_BFs` for all the genes may be memory intensive and takes a couple of days. We do provide an alternative strategy here. We could first partition the window file specified by `--window_file` in `TADA_A_read_info` into 50 parts. For each partition, we run simultaneously on a server `TADA_A_read_info` and store the output `base_info` in `RDS` format. It takes about 2hrs if using ~10 annotations for DNMs from five different studies (with less than 200 individuals each). We then read in the `.RDS` file iteratively and `append()` them together, and use the final object as the input for `--data` for `TADA_A_get_BFs`  
+  Running `TADA_A_read_info` for all the genes over many annotations may be memory intensive and takes a couple of days. We do provide an alternative strategy here. We could first partition the window file specified by `--window_file` in `TADA_A_read_info` into 50 parts (We provided the partitions in `MS_data` folder as `Example_windows_with_div_score_no_header.bed.temp.partition*.with_header.txt`). For each partition, we run simultaneously on a server `TADA_A_read_info` and store the output `base_info` in `RDS` format. It takes about 2hrs if using ~10 annotations for DNMs from five different studies (with less than 200 individuals each). We then read in the `.RDS` file iteratively and `append()` them together, and use the final object as the input for `--data` for `TADA_A_get_BFs` . Below is an example code.
+  
+
+```r
+# Read in data from one genomic partition, and save as a .RDS file
+
+compact_data_00 <- TADA_A_read_info(mut_files = c("../MS_data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../MS_data/Kong_cases_DNM_with_allele_info.txt","../MS_data/Wu_cases_DNM_with_allele_info.txt", "../MS_data/Jiang_cases_DNM_with_allele_info.txt", "../MS_data/Michaelson_cases_DNM_with_allele_info.txt"),
+                                   window_file = "../MS_data/windows_partition/Example_windows_with_div_score_no_header.bed.temp.partition00.with_header.txt",
+                                   mutrate_scaling_files = c("../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Yuen_NM2015_cases_DNM.txt","../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Kong_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Wu_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Jiang_cases_DNM.txt", "../MS_data/Example_windows_mutrate_with_div_score_scaling_file_for_Michaelson_cases_DNM.txt"),
+                                   sample_sizes = c(162, 78, 32, 32, 10),
+                                   gene_prior_file = "../MS_data/Example_gene_prior.txt",
+                                   nonAS_noncoding_annotations = c("../MS_data/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr.bed",  "../other_annotations/conservation/Noonan_brain_roadmap_union_within_10kb_and_promoter_no_utr_gerp_gt2.bed"),
+                                   AS_noncoding_annotations = list(c("../MS_data/spidex_public_noncommercial_v1_0.tab_alt_A_lower10pct.bed", "../MS_data/spidex_public_noncommercial_v1_0.tab_alt_C_lower10pct.bed", "../MS_data/spidex_public_noncommercial_v1_0.tab_alt_G_lower10pct.bed","../MS_data/spidex_public_noncommercial_v1_0.tab_alt_T_lower10pct.bed")),
+                                   report_proportion = 18665/18665,
+                                   chunk_partition_num =1,
+                                   node_n = 1,
+                                   mutrate_ref_files = c("../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_A.mutrate.bw",
+                                                         "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_C.mutrate.bw",
+                                                         "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_G.mutrate.bw",
+                                                         "../MS_data/Example_windows_extended_1bp_for_getting_base_level_mutrate.bed.fasta.tri.alt_T.mutrate.bw"),
+                                   MPI = 00
+)
+
+saveRDS(compact_data_00,"../MS_data/genomic_partition_00.RDS")
+
+```
+
+
+
+```r
+# append .RDS files from all partitions together
+data_partition <- list()
+test = sprintf("%02d", 0:49)
+for(i in 1:50){
+  temp <- readRDS(paste("../MS_data/genomic_partition_", test[i], ".RDS", sep = ""))
+  data_partition <- append(data_partition, temp$base_info)
+}
+
+table <- TADA_A_get_BFs(data = data_partition, selected_annotations = c(1,2,3), rr = c(0.43,0.80, 1.17), additional_BF_file = "../MS_data/Example_gene_coding_BF.txt")
+```
 
 
 The documentations of the parameters of `TADA_A_get_BFs` are listed below
