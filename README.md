@@ -259,6 +259,8 @@ TADA_A_get_BFs(data = compact_data_after_feature_selection$base_info, selected_a
 
 ```r
 # Read in data from one genomic partition, and save as a .RDS file
+# This is just an example code to show how to run analysis for one genomic partition.
+# In practice, we could analyze all the genomic partitions the same way simultaneously on a cluster. 
 
 compact_data_00 <- TADA_A_read_info(mut_files = c("../MS_data/Yuen_NM2015_cases_DNM_with_allele_info.txt","../MS_data/Kong_cases_DNM_with_allele_info.txt","../MS_data/Wu_cases_DNM_with_allele_info.txt", "../MS_data/Jiang_cases_DNM_with_allele_info.txt", "../MS_data/Michaelson_cases_DNM_with_allele_info.txt"),
                                    window_file = "../MS_data/windows_partition/Example_windows_with_div_score_no_header.bed.temp.partition00.with_header.txt",
