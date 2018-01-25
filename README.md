@@ -14,6 +14,11 @@ This executable has been added in the `external_tools` folder.
 
 ### 2.3 other mutation and annotation files
 You need to download and extract `MS_data.tar.gz` in the `TADA-A` folder to replicate the major analyses performed in the manuscript. The link is https://drive.google.com/open?id=13_ofZtsco5SCsqgwdMvZQr_BwBLxffRu. 
+```
+# after downloading, put MS_data.tar.gz in the main folder `TADA-A`
+tar -xvzf MS_data.tar.gz
+```
+You need to have 10GB space to hold the uncompressed files. 
 
 ## 3. Test run
 
