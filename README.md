@@ -12,6 +12,9 @@ Bedtools need to be installed and added to your PATH. We suggest using v2.17.0, 
 ### 2.2 bigWigAverageOverBed
 This executable has been added in the `external_tools` folder. 
 
+### 2.3 other mutation and annotation files
+You need to download and extract `MS_data.tar.gz` in the `TADA-A` folder to replicate the major analyses performed in the manuscript. The link is https://drive.google.com/open?id=13_ofZtsco5SCsqgwdMvZQr_BwBLxffRu. 
+
 ## 3. Test run
 
 We provided a `test_run.Rmd` in the `test_data` folder. Running the `test_run.Rmd` would generate a `test_run.html`, which should be the same as the `test_run_results.html` in the same folder. It takes about 5mins to finish (Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz).
