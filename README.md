@@ -12,7 +12,10 @@ Bedtools need to be installed and added to your PATH. We suggest using v2.17.0, 
 ### 2.2 bigWigAverageOverBed
 This executable has been added in the `external_tools` folder. 
 
-### 2.3 other mutation and annotation files
+### 2.3 R parckages
+`data.table` and `parallel` need to be installed in R. 
+
+### 2.4 other mutation and annotation files
 You need to download and extract `MS_data.tar.gz` in the `TADA-A` folder to replicate the major analyses performed in the manuscript. The link is https://drive.google.com/open?id=13_ofZtsco5SCsqgwdMvZQr_BwBLxffRu. 
 ```
 # after downloading, put MS_data.tar.gz in the main folder `TADA-A`
