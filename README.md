@@ -30,6 +30,8 @@ Follow this guide, you will get familiar with the usage of TADA-A and replicate 
 Make a R/Rmd file in the `analysis` folder. And follow the examples below to build your own analysis pipeline.
 
 ```r
+library(data.table)
+library(parallel)
 source("../lib/TADA_Annotation.R")
 TADA_A_adjust_mutation_rate(mut_file = "../MS_data/Yuen_NM2015_cases_DNM.bed",
                             window_file = "../MS_data/Example_windows_with_div_score.bed",
