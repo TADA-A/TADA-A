@@ -30,8 +30,8 @@ We provided a `test_run.Rmd` in the `test_data` folder. Running the `test_run.Rm
 ## 4. User guide
 Follow this guide, you will get familiar with the usage of TADA-A and replicate the major analyses done in the accompanying manuscript.
 
-**Note**
-To analyze data, you need to build a directory, e.g. `analysis` in the `TADA-A` folder. We suggest put all R or Rmd files with the executing code below in the `analysis` folder. Invoke R in the `analysis` folder. 
+**Note:**
+**To analyze data, you need to build a directory, e.g. `analysis` in the `TADA-A` folder. We suggest put all R or Rmd files with the executing code below in the `analysis` folder. Invoke R in the `analysis` folder.**
 
 ### 4.1 Step 1: Adjust mutation rates for each study.
 Make a R/Rmd file in the `analysis` folder. And follow the examples below to build your own analysis pipeline.
