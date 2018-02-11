@@ -191,7 +191,7 @@ A vector specifying the names of the base-level allele-specific baseline mutatio
 Estimate the relative risks of each individual annotation supplied to `TADA_A_read_info`, and only use the sinificant ones for the next round of joint estimation. The code below performs relative risk estimation. We have 13 features here, so we estimate the relative risk for each feature sequentially.
 
 ```r
-for(i in 1:13){
+for(i in 1:12){
   TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(i), gene_prior_file = "../MS_data/Example_gene_prior.txt", optimization_iteration = 2000)
 }
 ```
