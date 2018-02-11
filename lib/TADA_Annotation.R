@@ -18,7 +18,7 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   command <- paste("sed -n '1!p' ", window_file, " | awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} > ", paste(prefix, "_temp_windows.bed", sep = ""), sep = "")
   system(command)
   # get the number of SNVs for each window
-  command <- paste("bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
+  command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
   system(command)
   # read in the file with the number of SNVs for each window
   coverage <- fread(paste(prefix,"_temp_coverage.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
@@ -207,7 +207,7 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
     epi_ID = 1
     if (!is.na(nonAS_noncoding_annotations)[1]){ # then epigenomic_marks must be a vector of epigenomic bed files that need to be compard with the mutation data
       for(epi in nonAS_noncoding_annotations){
-        command <- paste("bedtools coverage -a ", epi, " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
+        command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", epi, " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
         system(command)
         base_in_epi <- fread(paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
         base_in_epi <- base_in_epi[,c("V4","V5"), with = FALSE]
@@ -227,7 +227,7 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
     if (!is.na(AS_noncoding_annotations)[1]){ # then epigenomic_marks must be a vector of epigenomic bed files that need to be compard with the mutation data
       for(epi in AS_noncoding_annotations){
         for(k in 1:length(epi)){
-          command <- paste("bedtools coverage -a ", epi[k], " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
+          command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", epi[k], " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
           system(command)
           base_in_epi <- fread(paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
           base_in_epi <- base_in_epi[,c("V4","V5"), with = FALSE]
@@ -269,7 +269,7 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
         mut_allele$V2 <- as.integer(mut_allele$V2)
         mut_allele$V3 <- as.integer(mut_allele$V3)
         fwrite(mut_allele, paste(prefix, "_temp_mut_allele.bed", sep = ""), col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\t")
-        command <- paste("bedtools coverage -a ", paste(prefix, "_temp_mut_allele.bed", sep = ""), " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_mut_allele.bed", sep = ""),sep = "")
+        command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", paste(prefix, "_temp_mut_allele.bed", sep = ""), " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_mut_allele.bed", sep = ""),sep = "")
         system(command)
         base_with_mut <- fread(paste(prefix,"_temp_for_mutrate_overlap_mut_allele.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
         base_with_mut <- base_with_mut[,c("V4","V5"), with = FALSE]
@@ -672,7 +672,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
     epi_ID = 1
     if (!is.na(nonAS_noncoding_annotations)[1]){ # then epigenomic_marks must be a vector of epigenomic bed files that need to be compard with the mutation data
       for(epi in nonAS_noncoding_annotations){
-        command <- paste("bedtools coverage -a ", epi, " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
+        command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", epi, " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
         system(command)
         base_in_epi <- fread(paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
         base_in_epi <- base_in_epi[,c("V4","V5"), with = FALSE]
@@ -692,7 +692,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
     if (!is.na(AS_noncoding_annotations)[1]){ # then epigenomic_marks must be a vector of epigenomic bed files that need to be compard with the mutation data
       for(epi in AS_noncoding_annotations){
         for(k in 1:length(epi)){
-          command <- paste("bedtools coverage -a ", epi[k], " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
+          command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", epi[k], " -b ", paste(prefix, "_temp_for_mutrate.bed", sep = ""),  " > ", paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""),sep = "")
           system(command)
           base_in_epi <- fread(paste(prefix,"_temp_for_mutrate_overlap_epi.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
           base_in_epi <- base_in_epi[,c("V4","V5"), with = FALSE]
