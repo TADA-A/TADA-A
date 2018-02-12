@@ -196,7 +196,8 @@ Estimate the relative risks of each individual annotation supplied to `TADA_A_re
 
 ```r
 for(i in 1:12){
-  TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(i), gene_prior_file = "../MS_data/Example_gene_prior.txt", optimization_iteration = 2000)
+  print(paste("Relative risk estimate of the ", i, "th annotation"))
+  print(TADA_A_RR_estimate(data = compact_data$base_info, selected_annotations = c(i), gene_prior_file = "../MS_data/Example_gene_prior.txt", optimization_iteration = 2000))
 }
 ```
 The documentations of the parameters of `TADA_A_RR_estimate` are listed below
