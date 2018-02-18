@@ -82,7 +82,7 @@ TADA_A_read_info <- function(mut_files = c("../data/Yuen_NM2015_cases_DNM_with_a
   # [mutrate_ref_files] is a vector of mutrate files in the bigwiggle format. These files have base-level mutation rates to a specific allele, A, C, G, T. 
   # [MPI] is the index that will add to temp files, useful when running multipe processes at one time
   # prefix for temporary files that will be deleted at the end of the pipeline
-  prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
+  prefix <- prefix <- as.integer((as.double(Sys.time())*1000+Sys.getpid()) %% 2^31) # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- paste("tmp/", prefix, MPI, sep = "")
   
   # make a tmp folder for tmp files
@@ -533,7 +533,7 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   # [compact_mut_output] if set to be True, a RDS with mutation data in a compact form will be generated. Useful for estimating RR and claculating Bayes factor
   # [MPI] is the index that will add to temp files, useful when running multipe processes at one time
   # prefix for temporary files that will be deleted at the end of the pipeline
-  prefix <- system("date +%s", intern = TRUE) # prefix for temporary files that will be deleted at the end of the pipeline
+  prefix <- prefix <- as.integer((as.double(Sys.time())*1000+Sys.getpid()) %% 2^31) # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- paste("tmp/", prefix, MPI, sep = "")
   
   # make a tmp folder for tmp files
