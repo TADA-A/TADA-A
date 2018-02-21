@@ -1,16 +1,21 @@
 
 
 # function to calibrate background mutation rate for each DNM study.
-TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scale_features, scaling_file_name){
+TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scale_features, scaling_file_name, mutrate_mode = "regular"){
   # [mut_file] is the file with DNM infomation in a BED format. 0-based start and 1-based end. e.g., "../data/Example_windows.bed"
   # The first 4 columns must be chr, start, end, and site_index of genomic windows.
   # [window_file] is the file with genomic windows. Each line represents one window. The columns are "chr", "start", "end", "genename", and "mutrate", followed by features that might affect local background mutation rate.
   # [sample_size] is the number of individuals. 
   # [scale_features] is a vector of the names of features that need to be scaled, this is recommended to apply to continuous features, such as GC content, to make easier the interpretation of the effect sizes of features. 
   # [scaling_file_name] is the name of the file that has the scaling factor for each genomic interval in [window_file]. 1st column is site_index, 2nd column is scaling factor of mutation rate. 
+  # [mutrate_mode], "regular" means the mutation rate of each window is the total sum of mutation rates over all bases. Under this setting, only in very rare cases a window will have mutation rate
+  # equal to 0. The output scaling file would remove these windows, as these windows can't be used in the likelihood estimation. "special" means the mutation rate of each window is the rate of 
+  # a specific type of mutations. For example, when analyzing WES data, we would want to use syn mutations to adjust for mutation rates. The mutation rate here should accordingly be the rate of 
+  # synnonymous mutations. Under this situation, more windows might have mutation rate as 0, but we still need to get the scaling factor for these windows, as the rate of other mutation types may 
+  # not be 0, thus the bases in these windows are informative. 
   
   # prefix for temporary files that will be deleted at the end of the pipeline
-  prefix <- system("date +%s", intern = TRUE)
+  prefix <- as.integer((as.double(Sys.time())*1000+Sys.getpid()) %% 2^31) # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- paste("tmp/", prefix, sep = "")
   
   # make a tmp folder for tmp files
@@ -18,7 +23,7 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   command <- paste("sed -n '1!p' ", window_file, " | awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} > ", paste(prefix, "_temp_windows.bed", sep = ""), sep = "")
   system(command)
   # get the number of SNVs for each window
-  command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
+  command <- paste("bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
   system(command)
   # read in the file with the number of SNVs for each window
   coverage <- fread(paste(prefix,"_temp_coverage.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
@@ -29,22 +34,34 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   feature_number <- dim(windows)[2] - 6
   # merge [window] and [coverage] to link mutation count with feature annotations
   coverage <- coverage[windows[,-1:-3], on="site_index"]
-  
-  coverage <- coverage[mutrate !=0]
-  for(i in 1:length(scale_features)){
-    coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+  if(mutrate_mode == "regular"){ 
+    coverage <- coverage[mutrate !=0]
+    for(i in 1:length(scale_features)){
+      coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+    }
+    # write the formula
+    f <- paste("mut_count ~ ", paste(colnames(coverage)[8 : (8 + feature_number -1)], collapse = " + "), " + offset(log(2*mutrate*sample_size))", sep = "")
+    #fit mutation rate model using a fixed set of features not including histone modification marks. 
+    out.offset <- glm(as.formula(f), family = poisson, data = coverage)
+    scaling <- data.table(site_index = coverage$site_index, scaling_factor = out.offset$fitted.values / (2 * coverage$mutrate * sample_size))
+  } else if(mutrate_mode == "special"){
+    coverage_mutrate_gt0 <- coverage[mutrate !=0]
+    for(i in 1:length(scale_features)){
+      coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+    }
+    coverage_mutrate_gt0 <- coverage[mutrate !=0]
+    f <- paste("mut_count ~ ", paste(colnames(coverage_mutrate_gt0)[8 : (8 + feature_number -1)], collapse = " + "), " + offset(log(2*mutrate*sample_size))", sep = "")
+    out.offset <- glm(as.formula(f), family = poisson, data = coverage_mutrate_gt0)
+    scaling_factor <- exp(as.matrix(cbind(1, coverage[,8 : (8 + feature_number -1)])) %*% out.offset$coefficients)
+    scaling <- data.table(site_index = coverage$site_index, scaling_factor = scaling_factor)
   }
-  # write the formula
-  f <- paste("mut_count ~ ", paste(colnames(coverage)[8 : (8 + feature_number -1)], collapse = " + "), " + offset(log(2*mutrate*sample_size))", sep = "")
-  #fit mutation rate model using a fixed set of features not including histone modification marks. 
-  out.offset <- glm(as.formula(f), family = poisson, data = coverage)
-  scaling <- data.table(site_index = coverage$site_index, scaling_factor = out.offset$fitted.values / (2 * coverage$mutrate * sample_size))
   fwrite(scaling, scaling_file_name, col.names = TRUE, row.names = FALSE, sep = "\t", quote = FALSE)
   # remove intermediate files
   system(paste("rm ", prefix, "_temp*", sep = ""))
   # the return value is the effect sizes of feature annotations on background mutation rates. 
   return(summary(out.offset)$coeff)
 }
+
 
 
 # define a function that is used in the allele-specific model
