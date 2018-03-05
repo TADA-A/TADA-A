@@ -559,14 +559,18 @@ TADA_A_DNM_generator <- function(window_file = "../data/Example_windows.bed",
   #mut <- fread(mut_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
   windows <- fread(window_file, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
   coverage <- windows
+
   # the number of genomic windows in [mutrate_scaling] is less than the number of windows in [windows] because there are a few windows with mutration rate equal to 0, and thus removed.
   for(i in 1:length(mutrate_scaling_files)){
     mutrate_scaling <- fread(mutrate_scaling_files[i], header = TRUE, sep = "\t", stringsAsFactors = FALSE)
     system(paste("echo \"Finished reading mutrate scaling file ", mutrate_scaling_files[i], ".\"", sep = ""))
     system("date")
     coverage <- coverage[mutrate_scaling, on = "site_index"]
+    coverage <- coverage[complete.cases(coverage)] # release memory
     colnames(coverage)[length(colnames(coverage))] <- paste("scaling_factor_study_", i, sep = "")
+    rm(mutrate_scaling) # release memory
   }
+  
   
   # get the piror probability of genes.
   gene_prior <- fread(gene_prior_file, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
