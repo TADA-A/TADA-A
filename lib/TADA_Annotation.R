@@ -1,7 +1,7 @@
 
 
 # function to calibrate background mutation rate for each DNM study.
-TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scale_features, scaling_file_name, mutrate_mode = "regular"){
+TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scale_features, scaling_file_name, mutrate_mode = "regular", genes = "all"){
   # [mut_file] is the file with DNM infomation in a BED format. 0-based start and 1-based end. e.g., "../data/Example_windows.bed"
   # The first 4 columns must be chr, start, end, and site_index of genomic windows.
   # [window_file] is the file with genomic windows. Each line represents one window. The columns are "chr", "start", "end", "genename", and "mutrate", followed by features that might affect local background mutation rate.
@@ -12,7 +12,9 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   # equal to 0. The output scaling file would remove these windows, as these windows can't be used in the likelihood estimation. "special" means the mutation rate of each window is the rate of 
   # a specific type of mutations. For example, when analyzing WES data, we would want to use syn mutations to adjust for mutation rates. The mutation rate here should accordingly be the rate of 
   # synnonymous mutations. Under this situation, more windows might have mutation rate as 0, but we still need to get the scaling factor for these windows, as the rate of other mutation types may 
-  # not be 0, thus the bases in these windows are informative. 
+  # not be 0, thus the bases in these windows are informative. If [genes] set to be not "all", then must set [mutrate_mode] to "special".
+  # [genes] could be "all", or a list of genes. If set to be "all", all windows will be used to adjust mutation rates. Otherwise, only windows with a gene name that 
+  # is included in the list of genes specified by [genes] will be used. 
   
   # prefix for temporary files that will be deleted at the end of the pipeline
   prefix <- as.integer((as.double(Sys.time())*1000+Sys.getpid()) %% 2^31) # prefix for temporary files that will be deleted at the end of the pipeline
@@ -23,7 +25,7 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   command <- paste("sed -n '1!p' ", window_file, " | awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} > ", paste(prefix, "_temp_windows.bed", sep = ""), sep = "")
   system(command)
   # get the number of SNVs for each window
-  command <- paste("bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
+  command <- paste("../external_tools/bedtools-2.17.0/bin/bedtools coverage -a ", mut_file, " -b ", paste(prefix, "_temp_windows.bed", sep = ""), " > ", paste(prefix,"_temp_coverage.bed", sep = ""), sep = "")
   system(command)
   # read in the file with the number of SNVs for each window
   coverage <- fread(paste(prefix,"_temp_coverage.bed", sep = ""), header = FALSE, sep = "\t", stringsAsFactors = FALSE)
@@ -34,6 +36,12 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   feature_number <- dim(windows)[2] - 6
   # merge [window] and [coverage] to link mutation count with feature annotations
   coverage <- coverage[windows[,-1:-3], on="site_index"]
+  if(genes == "all"){
+    target_genes <- unique(coverage$genename)
+  }else{
+    target_genes <- fread(genes, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+    target_genes <- target_genes[[1]] 
+  }
   if(mutrate_mode == "regular"){ 
     coverage <- coverage[mutrate !=0]
     for(i in 1:length(scale_features)){
@@ -45,11 +53,13 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
     out.offset <- glm(as.formula(f), family = poisson, data = coverage)
     scaling <- data.table(site_index = coverage$site_index, scaling_factor = out.offset$fitted.values / (2 * coverage$mutrate * sample_size))
   } else if(mutrate_mode == "special"){
-    coverage_mutrate_gt0 <- coverage[mutrate !=0]
     for(i in 1:length(scale_features)){
       coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
     }
     coverage_mutrate_gt0 <- coverage[mutrate !=0]
+    # only keep windows that are assigned to [target_genes]
+    coverage_mutrate_gt0 <- coverage_mutrate_gt0[is.element(genename, target_genes)]
+    
     f <- paste("mut_count ~ ", paste(colnames(coverage_mutrate_gt0)[8 : (8 + feature_number -1)], collapse = " + "), " + offset(log(2*mutrate*sample_size))", sep = "")
     out.offset <- glm(as.formula(f), family = poisson, data = coverage_mutrate_gt0)
     scaling_factor <- exp(as.matrix(cbind(1, coverage[,8 : (8 + feature_number -1)])) %*% out.offset$coefficients)
