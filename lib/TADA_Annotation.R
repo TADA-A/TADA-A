@@ -64,6 +64,7 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
     out.offset <- glm(as.formula(f), family = poisson, data = coverage_mutrate_gt0)
     scaling_factor <- exp(as.matrix(cbind(1, coverage[,8 : (8 + feature_number -1)])) %*% out.offset$coefficients)
     scaling <- data.table(site_index = coverage$site_index, scaling_factor = scaling_factor)
+    colnames(scaling) <- c("site_index", "scaling_factor")
   }
   fwrite(scaling, scaling_file_name, col.names = TRUE, row.names = FALSE, sep = "\t", quote = FALSE)
   # remove intermediate files
