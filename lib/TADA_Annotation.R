@@ -44,8 +44,10 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
   }
   if(mutrate_mode == "regular"){ 
     coverage <- coverage[mutrate !=0]
-    for(i in 1:length(scale_features)){
-      coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+    if(!is.na(scale_features)){
+      for(i in 1:length(scale_features)){
+        coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+      }
     }
     # write the formula
     f <- paste("mut_count ~ ", paste(colnames(coverage)[8 : (8 + feature_number -1)], collapse = " + "), " + offset(log(2*mutrate*sample_size))", sep = "")
@@ -53,8 +55,10 @@ TADA_A_adjust_mutation_rate <- function(mut_file, window_file, sample_size, scal
     out.offset <- glm(as.formula(f), family = poisson, data = coverage)
     scaling <- data.table(site_index = coverage$site_index, scaling_factor = out.offset$fitted.values / (2 * coverage$mutrate * sample_size))
   } else if(mutrate_mode == "special"){
-    for(i in 1:length(scale_features)){
-      coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+    if(!is.na(scale_features)){
+      for(i in 1:length(scale_features)){
+        coverage[[scale_features[i]]] <- as.vector(scale(coverage[[scale_features[i]]]))
+      }
     }
     coverage_mutrate_gt0 <- coverage[mutrate !=0]
     # only keep windows that are assigned to [target_genes]
