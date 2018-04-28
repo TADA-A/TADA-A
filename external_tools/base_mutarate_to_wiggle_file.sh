@@ -1,3 +1,4 @@
+#!/bin/bash
 touch $1.wiggle
 echo "variableStep chrom=chr1" >> $1.wiggle
 awk '$1 == "chr1"' $1 | awk {'print $3" "$6'} >> $1.wiggle

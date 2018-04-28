@@ -6,22 +6,29 @@ With the fast pace of technology revolution in the field of genomics, whole-exom
 
 ## 2. Prerequisites
 
-### 2.1 bedtools
-We used bedtools v2.17.0, which has been provided with TADA-A. Other versions might be incompatible because of modification of input arguments for some of the sub-functions of bedtools. But you don't need to worry about this issue. Executables are included in `external_tools/bedtools-2.17.0/bin/` and ready to use after loading the R functions. 
+### 2.1 Mutation data and annotation files
 
-### 2.2 bigWigAverageOverBed
-This executable has been added in the `external_tools` folder. 
+Mutation rates for variant size in each analysis window. Under `test_data` folder we provide them as companion files to the window file we provide.
+If you need to generate this files from customized window definition please use this [dockerized workflow](external_tools/mutation_annotation_pipeline.ipynb) 
+powered by [Script of Scripts](https://github.com/vatlab/SOS), a bioinformatics workflow system (Wang and Peng 2018).
 
-### 2.3 R parckages
-`data.table` and `parallel` need to be installed in R. 
-
-### 2.4 other mutation and annotation files
-You need to download and extract `MS_data.tar.gz` in the `TADA-A` folder to replicate the major analyses performed in the manuscript. The link is https://drive.google.com/open?id=13_ofZtsco5SCsqgwdMvZQr_BwBLxffRu. 
+Additionally you need to [download (click here)](https://drive.google.com/open?id=13_ofZtsco5SCsqgwdMvZQr_BwBLxffRu) and extract `MS_data.tar.gz` in the `TADA-A` folder to replicate the major analyses performed in the manuscript. The link is. 
 ```
 # after downloading, put MS_data.tar.gz in the main folder `TADA-A`
 tar -xvzf MS_data.tar.gz
 ```
 You need to have 10GB space to hold the uncompressed files. 
+
+### 2.2 Software tools
+
+#### `bedtools`
+We used bedtools v2.17.0, which has been provided with TADA-A. Other versions might be incompatible because of modification of input arguments for some of the sub-functions of bedtools. But you don't need to worry about this issue. Executables are included in `external_tools/bedtools-2.17.0/bin/` and ready to use after loading the R functions. 
+
+#### `bigWigAverageOverBed`
+This executable has been added in the `external_tools` folder. 
+
+#### `R parckages`
+`data.table` and `parallel` need to be installed in R. 
 
 ## 3. Test run
 
