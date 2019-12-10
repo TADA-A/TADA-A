@@ -11,8 +11,8 @@ With the fast pace of technology revolution in the field of genomics, whole-exom
 Mutation rates for variant size in each analysis window. Under `test_data` folder we provide them as companion files to the window file we provide.
 If you need to generate this files from customized window definition please use this [dockerized workflow](external_tools/mutation_annotation_pipeline.ipynb) 
 powered by [Script of Scripts](https://github.com/vatlab/SOS), a bioinformatics workflow system (Wang and Peng 2018).
-If you are not familiar with Docker, we also provided regular code to generate mutation rates for customized regions. 
 
+*If you are not familiar with Docker, we also provided regular code to generate mutation rates for customized regions*. 
 [Click here to see](https://github.com/TADA-A/TADA-A/blob/master/external_tools/base_mutarate_to_wiggle_file.sh)
 
 Additionally you need to [download (click here)](https://drive.google.com/open?id=13_ofZtsco5SCsqgwdMvZQr_BwBLxffRu) and extract `MS_data.tar.gz` in the `TADA-A` folder to replicate the major analyses performed in the manuscript. The link is. 
