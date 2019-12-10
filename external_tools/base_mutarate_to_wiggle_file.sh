@@ -1,9 +1,4 @@
-#touch $1.wiggle
-# previously I used touch to generate a .wiggle file, but using touch might cause problems. Particularly, if I ran this command once but terminated it for some reason,
-# leaving a non-empty .wiggle file, the contents of this incomplete wiggle file will be carried over to the new file.
-
-> $1.wiggle
-
+touch $1.wiggle
 echo "variableStep chrom=chr1" >> $1.wiggle
 awk '$1 == "chr1"' $1 | awk {'print $3" "$6'} >> $1.wiggle
 
@@ -75,4 +70,3 @@ awk '$1 == "chrX"' $1 | awk {'print $3" "$6'} >> $1.wiggle
 
 echo "variableStep chrom=chrY" >> $1.wiggle
 awk '$1 == "chrY"' $1 | awk {'print $3" "$6'} >> $1.wiggle
-

@@ -1,6 +1,4 @@
-#!/public/home/jiangyi/bin/Python3.4.0/bin/python3.4
-
-from __future__ import print_function
+#!/usr/bin/env python
 import sys
 import re
 import subprocess
@@ -34,5 +32,3 @@ while 1:
         m = m+1
 
 f.close()
-
-

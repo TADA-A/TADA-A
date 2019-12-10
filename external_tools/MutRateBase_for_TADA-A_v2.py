@@ -1,5 +1,5 @@
+#!/usr/bin/env python
 # in V2 version, any trinucleotide that has at least an "N" will be assigned a mutation rate 0.
-from __future__ import print_function
 import sys
 import re
 import subprocess
@@ -73,9 +73,3 @@ while 1:
         print(s[0],int(s[1])-1,s[2],ref,alt,i[1],sep="\t")
     
 f.close()
-
-
-
-
-
-
